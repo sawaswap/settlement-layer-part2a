@@ -1,4 +1,4 @@
-import { useAccount, useSwitchChain } from 'wagmi'
+import { useSwitchChain } from 'wagmi'
 import { appChain } from '@/config/chain'
 import { useCorrectNetwork } from '@/hooks/useCorrectNetwork'
 
@@ -9,11 +9,12 @@ import { useCorrectNetwork } from '@/hooks/useCorrectNetwork'
  * or when no wallet is connected (Screen 0 handles the unconnected case).
  */
 export function NetworkMismatchOverlay() {
-  const { isConnected } = useAccount()
-  const { isCorrectNetwork, currentChainId } = useCorrectNetwork()
+  const { isConnected, isCorrectNetwork, isNetworkKnown, currentChainId } = useCorrectNetwork()
   const { switchChain, isPending, error } = useSwitchChain()
 
-  if (!isConnected || isCorrectNetwork) return null
+  // Block only once the wallet's chain is known and confirmed wrong — avoids a
+  // flash while the first eth_chainId read resolves.
+  if (!isConnected || !isNetworkKnown || isCorrectNetwork) return null
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4">

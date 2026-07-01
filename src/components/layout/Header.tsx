@@ -28,7 +28,7 @@ export function Header() {
   const { address, isConnected } = useAccount()
   const { disconnect } = useDisconnect()
   const { isAdmin } = useAdminRole()
-  const { isCorrectNetwork } = useCorrectNetwork()
+  const { isCorrectNetwork, isNetworkKnown, currentChainId } = useCorrectNetwork()
 
   return (
     <header className="border-b border-slate-200 bg-white">
@@ -62,13 +62,17 @@ export function Header() {
         <div className="ml-auto flex items-center gap-3">
           <Badge
             className={
-              isCorrectNetwork
-                ? 'bg-emerald-100 text-emerald-800'
-                : 'bg-red-100 text-red-800'
+              !isConnected || !isNetworkKnown
+                ? 'bg-slate-100 text-slate-500'
+                : isCorrectNetwork
+                  ? 'bg-emerald-100 text-emerald-800'
+                  : 'bg-red-100 text-red-800'
             }
             title={`Expected chain ${appChain.id}`}
           >
-            {appChain.name}
+            {!isConnected || !isNetworkKnown || isCorrectNetwork
+              ? appChain.name
+              : `Wrong network (chain ${currentChainId})`}
           </Badge>
 
           {isConnected ? (
