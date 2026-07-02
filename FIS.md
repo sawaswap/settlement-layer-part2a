@@ -174,4 +174,5 @@ Adding a featured wallet is a one-line edit to the `FEATURED` list in `ConnectWa
 
 - **e. Role and Permission Logic** — Admin (global, role registry) vs Agent B / User A / Beneficiary (per-transaction from STID state); User C has no on-chain identity (corridor metadata surfaced in detail views only).
 - **f. Chain-Agnostic Adaptation Notes** — all Base-specific values are env-driven; the port surface to Celo / BNB Chain / Stellar. (Primary reusability asset.)
+  - **Chain-state semantics (agreed).** Env config defines *which* chain the Console checks the wallet against; the *displayed* network state is derived from the wallet's **live** chainId (`eth_chainId` + `chainChanged`), never from config. "Chain-aware via env" (C.2 / E.5) means the target chain is configurable — not that the displayed state comes from configuration. The wrong-network guard blocks all interaction whenever the wallet's live chainId ≠ the configured target.
 - **g. Testing Patterns** — manual verification of each state-machine path across all five screens, plus wallet/role detection and the Agent B dashboard.
