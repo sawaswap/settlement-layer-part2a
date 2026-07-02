@@ -157,6 +157,12 @@ Wallet/SDK errors are mapped to short, human messages rather than raw stack text
 - The connected wallet's **actual** chain is read from the EIP-1193 provider (`eth_chainId`) and kept live by subscribing to the provider's **`chainChanged`** event (`useWalletChainId`). This is provider truth, independent of the configured-chain state, so an **in-session** network switch (e.g. to Mainnet) is detected immediately and detection is correct again on reload.
 - On a mismatch, a **prominent overlay blocks all interaction** with a one-click "Switch to Base Sepolia" (`useSwitchChain`); the header badge shows "Wrong network (chain N)". The overlay suppresses itself only while the first chain read resolves, to avoid a load-time flash.
 
+**Per-site networks (MetaMask) — how to reproduce the guard.** Modern MetaMask scopes the active network **per connected site**: the wallet exposes the site's own selected network via `eth_chainId`/`chainChanged`, independent of the network shown in MetaMask's own UI. Consequently, toggling MetaMask's global network does **not** change the connected site's network — the Console correctly continues on Base Sepolia (this is expected, not a defect). To exercise the wrong-network guard, change the *site's* network:
+- connect while MetaMask is on another network (e.g. Ethereum Mainnet) → the Console blocks immediately and "Switch to Base Sepolia" recovers it; or
+- change the site's network via MetaMask's per-site network control → the guard reacts live.
+
+A wallet without per-site networks (e.g. Phantom) switches globally and triggers the guard directly. The reactive path is covered by a deterministic test (`useWalletChainId.test.ts`) driving a mock provider's `chainChanged`, so acceptance does not depend on any wallet's UX.
+
 ### Extension pattern — adding a wallet
 
 Adding a featured wallet is a one-line edit to the `FEATURED` list in `ConnectWallets` (display name + install hint); any EIP-6963-announcing extension is picked up automatically with no code change. A non-discoverable wallet is added by appending one connector to the `connectors` array in `wagmi.ts`. No screen, routing, or signing code changes — this satisfies the C.5.c "without architectural change" requirement.
