@@ -121,13 +121,14 @@ History query bound: the window is `latest − (age_in_seconds / blockTime + mar
 
 ## d. Wallet Integration Patterns
 
-The Console supports **MetaMask**, **Phantom**, and **Base Wallet** (Agreement C.5.c), via EIP-6963 browser-extension discovery and the Coinbase SDK, with WalletConnect available when a project ID is configured. The layer is extensible by **configuration**, not by architectural change.
+The Console supports **MetaMask**, **Phantom**, and **Base Wallet** (Agreement C.5.c) via the two mechanisms C.5 names — **direct browser-extension injection** and **WalletConnect** — and no wallet-proprietary SDK. The layer is extensible by **configuration**, not by architectural change.
 
 ### Connector assembly (`src/config/wagmi.ts`)
 
-- **EIP-6963 multi-injected discovery** (`multiInjectedProviderDiscovery: true`) auto-detects MetaMask, Phantom, and any other extension that announces itself — each surfaces as a named, icon-bearing connector with no per-wallet code.
-- **`coinbaseWallet()`** — Base Wallet (Coinbase), works with or without the extension installed.
-- **`walletConnect()`** — added only when `VITE_WALLETCONNECT_PROJECT_ID` is set (the production project ID is held by the Client per E.2).
+- **EIP-6963 multi-injected discovery** (`multiInjectedProviderDiscovery: true`) auto-detects MetaMask, Phantom, and a Base/Coinbase extension if installed — each surfaces as a named, icon-bearing connector with no per-wallet code.
+- **`walletConnect()`** — a universal QR for mobile wallets (e.g. MetaMask and Phantom mobile). Enabled when `VITE_WALLETCONNECT_PROJECT_ID` is set (the production project ID is held by the Client per E.2).
+- **Base Wallet** connects via **browser-extension injection** (the Base/Coinbase extension, discovered over EIP-6963) — one of the two mechanisms C.5 names. The contract requirement ("Base Wallet … via WalletConnect and direct browser extension injection") is satisfied by the injection path; no proprietary SDK connector is added.
+  - **Vendor note:** the Base mobile app does **not** connect over WalletConnect. After the Coinbase Wallet → Base App rebrand, dapp connection moved to the Base Account SDK / "Sign in with Base" (passkey), and mobile scan-to-connect was discontinued. **Testing:** connect Base via its browser extension — do not scan a QR with the mobile app.
 
 ### Connection flow (Screen 0, `ConnectWallets`)
 

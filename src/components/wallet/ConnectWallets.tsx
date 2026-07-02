@@ -5,17 +5,17 @@ import { friendlyConnectError } from '@/lib/walletErrors'
 
 /**
  * Wallet picker (Agreement C.2 Screen 0). Lists every available connector —
- * EIP-6963-discovered extensions (MetaMask, Phantom, …), Coinbase/Base Wallet,
- * and WalletConnect when configured — as named, icon-bearing buttons.
+ * EIP-6963-discovered extensions (MetaMask, Phantom, a Base/Coinbase extension
+ * if installed) and WalletConnect — as named, icon-bearing buttons.
  *
- * The three contractually-named wallets are surfaced first; install hints are
- * shown for any that aren't detected. Adding a featured wallet is a one-line
- * edit to FEATURED below — no architectural change (C.5.c).
+ * Per C.5 the wallets connect via injection or WalletConnect only. Base Wallet
+ * connects via WalletConnect (scan the QR with the Base app) or its browser
+ * extension — see the note below the list. Install hints are shown for any
+ * featured extension not detected.
  */
 const FEATURED: { match: string; label: string; href: string }[] = [
   { match: 'metamask', label: 'MetaMask', href: 'https://metamask.io/download/' },
   { match: 'phantom', label: 'Phantom', href: 'https://phantom.app/download' },
-  { match: 'coinbase', label: 'Base Wallet', href: 'https://www.coinbase.com/wallet/downloads' },
 ]
 
 function featuredRank(name: string): number {
@@ -25,12 +25,19 @@ function featuredRank(name: string): number {
   return idx === -1 ? 50 : idx
 }
 
+/** Clarify that WalletConnect is the route for mobile wallets (MetaMask/Phantom). */
+function displayName(connector: Connector): string {
+  if (connector.type === 'walletConnect' || connector.name.toLowerCase().includes('walletconnect')) {
+    return 'WalletConnect · mobile wallets'
+  }
+  return connector.name
+}
+
 export function ConnectWallets() {
   const { connectors, connect, isPending, variables, error } = useConnect()
 
   const ordered = useMemo(() => {
-    // Dedupe by display name (an installed Coinbase extension can appear both
-    // via 6963 discovery and via the explicit SDK connector).
+    // Dedupe by display name (guards against a wallet appearing twice).
     const seen = new Set<string>()
     const unique = connectors.filter((c) => {
       const key = c.name.toLowerCase()
@@ -56,7 +63,7 @@ export function ConnectWallets() {
             className="flex w-full items-center gap-3 rounded-lg border border-slate-300 px-4 py-3 text-sm font-medium hover:bg-slate-50 disabled:opacity-60"
           >
             <WalletIcon connector={connector} />
-            <span>{connector.name}</span>
+            <span>{displayName(connector)}</span>
             <span className="ml-auto text-slate-400">{pending ? 'Connecting…' : 'Connect →'}</span>
           </button>
         )
@@ -83,6 +90,11 @@ export function ConnectWallets() {
           .
         </p>
       )}
+
+      <p className="pt-1 text-xs text-slate-400">
+        Base Wallet: connect via the{' '}
+        <span className="font-medium">Base / Coinbase browser extension</span>.
+      </p>
     </div>
   )
 }

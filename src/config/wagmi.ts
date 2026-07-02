@@ -1,34 +1,40 @@
 import { createConfig, http } from 'wagmi'
 import type { CreateConnectorFn } from 'wagmi'
-import { coinbaseWallet, walletConnect } from 'wagmi/connectors'
+import { walletConnect } from 'wagmi/connectors'
 import { appChain } from './chain'
 import { env } from './env'
 
 /**
- * Wallet integration layer (Agreement C.5.c, FIS d). The integration is
- * extensible such that additional wallets are added by configuration, not by an
- * architectural change:
- *   - EIP-6963 multi-injected discovery (below) auto-detects MetaMask, Phantom,
- *     and any other browser-extension wallet that announces itself — each
- *     surfaces as a named, icon-bearing connector with no per-wallet code.
- *   - coinbaseWallet() → Base Wallet (Coinbase) via SDK, works with or without
- *     the extension installed.
- *   - walletConnect()  → added only when a projectId is configured (E.2:
- *     production projectId held by the Client).
+ * Wallet integration layer (Agreement C.5.c). Per C.5 the wallet set —
+ * MetaMask, Phantom, Base Wallet — is integrated via the two sanctioned
+ * mechanisms only:
+ *   1. Direct browser-extension injection — EIP-6963 multi-injected discovery
+ *      (below) auto-detects MetaMask, Phantom, and a Base/Coinbase extension
+ *      if installed, each as a named, icon-bearing connector.
+ *   2. WalletConnect — the path for the Base mobile app and other mobile
+ *      wallets via a universal QR. Enabled when a projectId is configured
+ *      (production projectId is the Client's, per E.2).
  *
- * Screen 0 orders and presents these; adding a featured wallet is a list edit.
+ * No wallet-proprietary SDK connector is used: Base Wallet connects via
+ * WalletConnect (mobile) or injection (extension), exactly as C.5 specifies.
+ * Adding a wallet is a configuration change, not an architectural one.
  */
-const connectors: CreateConnectorFn[] = [
-  coinbaseWallet({ appName: env.VITE_APP_NAME, preference: 'all' }),
-  ...(env.VITE_WALLETCONNECT_PROJECT_ID
-    ? [
-        walletConnect({
-          projectId: env.VITE_WALLETCONNECT_PROJECT_ID,
-          showQrModal: true,
-        }),
-      ]
-    : []),
-]
+const connectors: CreateConnectorFn[] = env.VITE_WALLETCONNECT_PROJECT_ID
+  ? [
+      walletConnect({
+        projectId: env.VITE_WALLETCONNECT_PROJECT_ID,
+        showQrModal: true,
+        metadata: {
+          name: env.VITE_APP_NAME,
+          description: 'SawaSwap Operator Console',
+          // Match the actual serving origin so WalletConnect verification passes
+          // on any deploy (staging preview or production) without a domain allowlist.
+          url: typeof window !== 'undefined' ? window.location.origin : 'https://console.sawaswap.io',
+          icons: ['https://sawaswap.io/favicon.ico'],
+        },
+      }),
+    ]
+  : []
 
 export const wagmiConfig = createConfig({
   chains: [appChain],
