@@ -34,7 +34,7 @@ export function Screen2Monitor() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lastStid])
 
-  const { exists, transaction, porSubmitted, isLoading, refetch } = useTransaction(activeStid)
+  const { exists, transaction, porSubmitted, isLoading, isError, refetch } = useTransaction(activeStid)
   const now = useChainNow()
   const { entries, isLoading: historyLoading, error: historyError, refetch: refetchHistory } =
     useTransactionHistory(activeStid, transaction?.committedAt)
@@ -100,7 +100,13 @@ export function Screen2Monitor() {
 
         {activeStid && isLoading && <p className="text-sm text-slate-400">Loading transaction…</p>}
 
-        {activeStid && !isLoading && exists === false && (
+        {activeStid && !isLoading && isError && (
+          <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+            Could not read this transaction from the network. Check your connection and try again.
+          </div>
+        )}
+
+        {activeStid && !isLoading && !isError && exists === false && (
           <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
             No transaction found for this STID on {`this network`}.
           </div>
