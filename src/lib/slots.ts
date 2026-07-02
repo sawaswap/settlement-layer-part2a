@@ -64,3 +64,16 @@ export const beneficiaryLabel: Record<Direction, string> = {
   [Direction.CMM]: 'Agent B wallet (beneficiary)',
   [Direction.MMC]: 'User A wallet (beneficiary)',
 }
+
+/**
+ * Reverse of the slot mapping: which address slot holds Agent B, for display
+ * (Agreement C.2 Screen 2 "identity of Agent B assigned to the transaction").
+ * CMM → Agent B is the beneficiary; MMC → Agent B is the originator.
+ */
+export function deriveAgentB(
+  direction: Direction,
+  originator: Address,
+  beneficiary: Address,
+): Address {
+  return direction === Direction.CMM ? beneficiary : originator
+}
