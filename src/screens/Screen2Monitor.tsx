@@ -34,10 +34,19 @@ export function Screen2Monitor() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lastStid])
 
-  const { exists, transaction, porSubmitted, isLoading, isError, refetch } = useTransaction(activeStid)
+  const { exists, transaction, porSubmitted, isLoading, isError, refetch } =
+    useTransaction(activeStid)
   const now = useChainNow()
-  const { entries, isLoading: historyLoading, error: historyError, refetch: refetchHistory } =
-    useTransactionHistory(activeStid, transaction?.committedAt)
+  const {
+    entries,
+    isLoading: historyLoading,
+    error: historyError,
+    refetch: refetchHistory,
+  } = useTransactionHistory(
+    activeStid,
+    transaction?.committedAt,
+    transaction ? transaction.tw1 + transaction.tw2 + transaction.tw3 : undefined,
+  )
 
   const window = useMemo(() => {
     if (!transaction) return null

@@ -25,11 +25,12 @@ const LOG_PAGE = 800n
 /**
  * Full state-transition history for a STID (Agreement C.2 Screen 2 — "full
  * state transition history, each entry linked to its Basescan transaction
- * hash"). Fetches the Settlement contract's logs over a window bounded by the
- * transaction's committedAt (we don't depend on the deploy block), then keeps
- * only those whose indexed stid matches. Refreshes on demand.
+ * hash"). Fetches the Settlement contract's logs over the transaction's
+ * lifecycle window (committedAt … committedAt + tw1+tw2+tw3), paged so we
+ * never trip the RPC range cap or its rate limit, then keeps only those whose
+ * indexed stid matches. Refreshes on demand.
  */
-export function useTransactionHistory(stid?: Hex, committedAt?: bigint) {
+export function useTransactionHistory(stid?: Hex, committedAt?: bigint, lifecycleSeconds?: bigint) {
   const publicClient = usePublicClient()
   const [entries, setEntries] = useState<HistoryEntry[]>([])
   const [isLoading, setLoading] = useState(false)
@@ -49,27 +50,38 @@ export function useTransactionHistory(stid?: Hex, committedAt?: bigint) {
     try {
       const latest = await publicClient.getBlockNumber()
       const nowSec = BigInt(Math.floor(Date.now() / 1000))
-      const ageSeconds = nowSec > committedAt ? nowSec - committedAt : 0n
-      const ageBlocks = ageSeconds / BLOCK_TIME + LOOKBACK_MARGIN
-      const fromBlock = latest > ageBlocks ? latest - ageBlocks : 0n
 
-      // Page [fromBlock, latest] in <= LOG_PAGE windows so no single
-      // eth_getLogs call exceeds the provider's range cap.
-      const ranges: Array<{ from: bigint; to: bigint }> = []
-      for (let start = fromBlock; start <= latest; start += LOG_PAGE + 1n) {
-        const end = start + LOG_PAGE < latest ? start + LOG_PAGE : latest
-        ranges.push({ from: start, to: end })
+      // A transaction's events only occur within its lifecycle window,
+      // [committedAt, committedAt + tw1+tw2+tw3]. Translate that time span into
+      // a block range (approx, via average block time) instead of scanning to
+      // the chain head — otherwise an old transaction spans tens of thousands
+      // of blocks, flooding the RPC with pages and tripping its rate limit.
+      const startAge = nowSec > committedAt ? nowSec - committedAt : 0n
+      const fromAgeBlocks = startAge / BLOCK_TIME + LOOKBACK_MARGIN
+      const fromBlock = latest > fromAgeBlocks ? latest - fromAgeBlocks : 0n
+
+      const endSec =
+        lifecycleSeconds && lifecycleSeconds > 0n ? committedAt + lifecycleSeconds : nowSec
+      let toBlock = latest
+      if (endSec < nowSec) {
+        const endAgeBlocks = (nowSec - endSec) / BLOCK_TIME
+        const back = endAgeBlocks > LOOKBACK_MARGIN ? endAgeBlocks - LOOKBACK_MARGIN : 0n
+        toBlock = latest > back ? latest - back : latest
       }
-      const pages = await Promise.all(
-        ranges.map((r) =>
-          publicClient.getLogs({
-            address: contracts.settlement.address,
-            fromBlock: r.from,
-            toBlock: r.to,
-          }),
-        ),
-      )
-      const logs = pages.flat()
+
+      // Page the bounded range in <= LOG_PAGE windows, sequentially, so no
+      // single eth_getLogs exceeds the provider's range cap and we don't burst
+      // its rate limit.
+      let logs: Awaited<ReturnType<NonNullable<typeof publicClient>['getLogs']>> = []
+      for (let start = fromBlock; start <= toBlock; start += LOG_PAGE + 1n) {
+        const end = start + LOG_PAGE < toBlock ? start + LOG_PAGE : toBlock
+        const page = await publicClient.getLogs({
+          address: contracts.settlement.address,
+          fromBlock: start,
+          toBlock: end,
+        })
+        logs = logs.concat(page)
+      }
 
       const parsed = parseEventLogs({ abi: settlementAbi, logs })
       const mine = parsed
@@ -95,7 +107,7 @@ export function useTransactionHistory(stid?: Hex, committedAt?: bigint) {
     } finally {
       setLoading(false)
     }
-  }, [publicClient, stid, committedAt])
+  }, [publicClient, stid, committedAt, lifecycleSeconds])
 
   useEffect(() => {
     void load()
