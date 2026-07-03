@@ -11,10 +11,16 @@ export interface HistoryEntry {
   logIndex: number
 }
 
-/** Average Base block time (seconds) — used to bound the log query window. */
-const BLOCK_TIME = 2
+/** Average Base block time (seconds) — used to estimate the commit block. */
+const BLOCK_TIME = 2n
 /** Safety margin (blocks) added before the estimated commit block. */
 const LOOKBACK_MARGIN = 250n
+/**
+ * Maximum block span per `eth_getLogs` call. Public Base RPCs cap the query
+ * range (~2000 blocks); we page in windows well under that so a long-lived
+ * transaction's history never trips the limit.
+ */
+const LOG_PAGE = 800n
 
 /**
  * Full state-transition history for a STID (Agreement C.2 Screen 2 — "full
@@ -31,23 +37,39 @@ export function useTransactionHistory(stid?: Hex, committedAt?: bigint) {
 
   const load = useCallback(async () => {
     if (!publicClient || !stid) return
+    // Require committedAt before querying: without it we cannot bound the range
+    // and would scan from genesis, which public RPCs reject (block-range cap).
+    // The effect re-runs once the transaction read supplies committedAt.
+    if (!committedAt || committedAt <= 0n) {
+      setEntries([])
+      return
+    }
     setLoading(true)
     setError('')
     try {
       const latest = await publicClient.getBlockNumber()
-      let fromBlock = 0n
-      if (committedAt && committedAt > 0n) {
-        const nowSec = BigInt(Math.floor(Date.now() / 1000))
-        const ageSeconds = nowSec > committedAt ? nowSec - committedAt : 0n
-        const ageBlocks = ageSeconds / BigInt(BLOCK_TIME) + LOOKBACK_MARGIN
-        fromBlock = latest > ageBlocks ? latest - ageBlocks : 0n
-      }
+      const nowSec = BigInt(Math.floor(Date.now() / 1000))
+      const ageSeconds = nowSec > committedAt ? nowSec - committedAt : 0n
+      const ageBlocks = ageSeconds / BLOCK_TIME + LOOKBACK_MARGIN
+      const fromBlock = latest > ageBlocks ? latest - ageBlocks : 0n
 
-      const logs = await publicClient.getLogs({
-        address: contracts.settlement.address,
-        fromBlock,
-        toBlock: 'latest',
-      })
+      // Page [fromBlock, latest] in <= LOG_PAGE windows so no single
+      // eth_getLogs call exceeds the provider's range cap.
+      const ranges: Array<{ from: bigint; to: bigint }> = []
+      for (let start = fromBlock; start <= latest; start += LOG_PAGE + 1n) {
+        const end = start + LOG_PAGE < latest ? start + LOG_PAGE : latest
+        ranges.push({ from: start, to: end })
+      }
+      const pages = await Promise.all(
+        ranges.map((r) =>
+          publicClient.getLogs({
+            address: contracts.settlement.address,
+            fromBlock: r.from,
+            toBlock: r.to,
+          }),
+        ),
+      )
+      const logs = pages.flat()
 
       const parsed = parseEventLogs({ abi: settlementAbi, logs })
       const mine = parsed

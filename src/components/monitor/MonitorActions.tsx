@@ -75,7 +75,11 @@ export function MonitorActions({
         <button
           onClick={() => run('por')}
           disabled={!canSubmitPoR || busy !== null}
-          className="rounded bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+          className={
+            canSubmitPoR
+              ? 'rounded bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-700'
+              : 'cursor-not-allowed rounded bg-slate-100 px-3 py-2 text-sm font-medium text-slate-400 ring-1 ring-slate-200'
+          }
           title={porSubmitterHint(isPoICommitted, window.expired, isEligibleClaimant, porSubmitted)}
         >
           {busy === 'por' ? 'Submitting PoR…' : 'Submit PoR'}
@@ -95,6 +99,13 @@ export function MonitorActions({
       {isPoICommitted && !porSubmitted && !isEligibleClaimant && !window.expired && (
         <p className="mt-2 text-xs text-slate-500">
           Only the eligibleClaimant wallet can submit the PoR for this transaction.
+        </p>
+      )}
+      {isPoICommitted && !porSubmitted && window.expired && (
+        <p className="mt-2 text-xs text-slate-500">
+          TW1 has elapsed, so a PoR can no longer be submitted. Escalate with{' '}
+          <span className="font-medium">pokeTW1</span> to open the claim window; the claim is then
+          submitted on the Dispute screen.
         </p>
       )}
       {error && <p className="mt-2 text-xs text-red-600">{error}</p>}
