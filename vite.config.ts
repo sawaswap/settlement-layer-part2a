@@ -25,7 +25,14 @@ export default defineConfig({
           if (id.includes('@walletconnect') || id.includes('@reown') || id.includes('@coinbase'))
             return 'walletconnect'
           if (id.includes('wagmi') || id.includes('viem') || id.includes('@tanstack')) return 'web3'
-          if (id.includes('react') || id.includes('scheduler')) return 'react'
+          // Match only the React runtime packages by path boundary, so this
+          // stays a dependency-free leaf chunk. A broad `includes('react')`
+          // also swept in react-router (which imports @remix-run/router from
+          // `vendor`), creating a vendor <-> react chunk cycle whose top-level
+          // bindings then evaluated out of order at runtime — the "Cannot
+          // access '…' before initialization" crash in the production build.
+          if (id.includes('/react/') || id.includes('/react-dom/') || id.includes('/scheduler/'))
+            return 'react'
           return 'vendor'
         },
       },
