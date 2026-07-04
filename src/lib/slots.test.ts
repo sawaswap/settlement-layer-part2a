@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { resolveSlots, beneficiaryLabel } from './slots'
+import { resolveSlots, beneficiaryLabel, deriveAgentB } from './slots'
 import { Direction } from './state'
 
 const A = '0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa' as const
@@ -24,5 +24,10 @@ describe('direction-dependent slot mapping (Francis Q1 / v0.12.0 Tables 1/2)', (
   it('labels the beneficiary input by direction', () => {
     expect(beneficiaryLabel[Direction.CMM]).toContain('Agent B')
     expect(beneficiaryLabel[Direction.MMC]).toContain('User A')
+  })
+
+  it('derives Agent B from the correct slot by direction', () => {
+    expect(deriveAgentB(Direction.CMM, A, B)).toBe(B) // CMM: Agent B = beneficiary
+    expect(deriveAgentB(Direction.MMC, B, A)).toBe(B) // MMC: Agent B = originator
   })
 })

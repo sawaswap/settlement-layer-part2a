@@ -14,24 +14,25 @@ export enum SettlementState {
 
 export type TimeWindow = 'TW1' | 'TW2' | 'TW3' | null
 
-/** UI-facing labels per Agreement C.2 Screen 2 (Pending/Active/Escalated/Settled/Reversed). */
+/**
+ * UI-facing labels per Agreement C.2 Screen 2 (Pending/Active/Escalated/
+ * Settled/Reversed).
+ *
+ * Mapping note: the deployed contract's entry state is `PoICommitted` — escrow
+ * locked, TW1 running, `submitPoR` accepted (see Settlement.submitPoR/pokeTW1).
+ * Per C.2 Screen 1 ("State indicator: confirms transition to Active state")
+ * this entry state surfaces as "Active". C.2's "Pending" is the brief
+ * pre-confirmation (unmined commit) state, shown by Screen 1 while the tx is in
+ * flight — it is not a distinct on-chain enum value. `ExecutionOpen` is a
+ * reserved enum value not entered in the Part 1 flow; labelled "Active" too.
+ */
 export const stateLabel: Record<SettlementState, string> = {
-  [SettlementState.PoICommitted]: 'Pending',
+  [SettlementState.PoICommitted]: 'Active',
   [SettlementState.ExecutionOpen]: 'Active',
   [SettlementState.EscalationL1]: 'Escalated',
   [SettlementState.EscalationL2_DRP]: 'Escalated (DRP)',
   [SettlementState.Settled]: 'Settled',
   [SettlementState.Reversed]: 'Reversed',
-}
-
-/** Tailwind colour token (see tailwind.config.ts `state.*`) for a given state. */
-export const stateColor: Record<SettlementState, string> = {
-  [SettlementState.PoICommitted]: 'state-pending',
-  [SettlementState.ExecutionOpen]: 'state-active',
-  [SettlementState.EscalationL1]: 'state-escalated',
-  [SettlementState.EscalationL2_DRP]: 'state-escalated',
-  [SettlementState.Settled]: 'state-settled',
-  [SettlementState.Reversed]: 'state-reversed',
 }
 
 /** Which time window is active in a given state (null for terminal states). */

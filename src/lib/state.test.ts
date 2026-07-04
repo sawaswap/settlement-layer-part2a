@@ -8,7 +8,8 @@ import {
 
 describe('settlement state machine', () => {
   it('labels each state per Agreement C.2 Screen 2', () => {
-    expect(stateLabel[SettlementState.PoICommitted]).toBe('Pending')
+    // PoICommitted is the live escrow-locked/TW1 state → "Active" (C.2 Screen 1).
+    expect(stateLabel[SettlementState.PoICommitted]).toBe('Active')
     expect(stateLabel[SettlementState.ExecutionOpen]).toBe('Active')
     expect(stateLabel[SettlementState.EscalationL1]).toBe('Escalated')
     expect(stateLabel[SettlementState.Settled]).toBe('Settled')
