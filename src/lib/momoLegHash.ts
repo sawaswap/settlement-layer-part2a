@@ -20,8 +20,9 @@ import { Direction } from './state'
  *
  * BUILD STATUS: momoLegHash = keccak256(canonical preimage). The canonical
  * field-by-field serialisation, the encryption boundary for block (c), the
- * IPFS upload, and the CID storage/discovery for Screen 2 retrieval are IA
- * §12.4.4 items handed to our implementation design — being finalised. This
+ * IPFS upload, and the CID storage/discovery for Screen 2 retrieval are handed
+ * to our implementation design — being finalised — layered on the IA §12.3.3
+ * Block C storageLocation + §12.4.1–§12.4.3 three-key encryption model. This
  * module pins the commitment shape (deterministic, key-order-independent) so
  * Screen 1 can commit today; the canonical encoding is centralised here so the
  * eventual schema lock is a single-file change.
