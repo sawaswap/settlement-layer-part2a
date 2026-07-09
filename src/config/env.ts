@@ -41,6 +41,13 @@ const schema = z.object({
     .string()
     .optional()
     .transform((v) => v !== 'false'),
+
+  // Lower bound for Screen 4's transaction discovery (no-backend SPA, so the
+  // dashboard pages PoICommitted logs client-side). Defaults to the deployment
+  // block of the default Settlement instance (0x9645…8331 on Base Sepolia) so
+  // history is complete; point at a later block to narrow the scan when the
+  // Console targets a different instance or you only need recent activity.
+  VITE_INDEX_FROM_BLOCK: z.coerce.number().int().nonnegative().default(42110394),
 })
 
 const parsed = schema.safeParse(import.meta.env)
