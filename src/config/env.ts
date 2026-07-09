@@ -31,6 +31,16 @@ const schema = z.object({
     .string()
     .optional()
     .transform((v) => (v && v.length > 0 ? v : undefined)),
+
+  // Screen 3 test-harness control that presets the MockDRP outcome so both DRP
+  // terminals (DRP-Settled / DRP-Reversed) are reachable browser-only, without a
+  // CLI. MockDRP is explicitly "not a production DRP"; the control is isolated
+  // and disappears with it. Set 'false' to hide it (e.g. if outcomes are preset
+  // out-of-band) — pending Francis's steer (20260708 clarification, point c).
+  VITE_ENABLE_DRP_HARNESS: z
+    .string()
+    .optional()
+    .transform((v) => v !== 'false'),
 })
 
 const parsed = schema.safeParse(import.meta.env)

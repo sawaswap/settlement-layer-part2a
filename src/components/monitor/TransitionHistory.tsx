@@ -8,6 +8,7 @@ const eventLabel: Record<string, string> = {
   PoRSubmitted: 'PoR submitted',
   StateChanged: 'State changed',
   ClaimSubmitted: 'Claim submitted',
+  ClaimUpdated: 'Claim updated',
   DRPInvoked: 'DRP invoked',
   Settled: 'Settled — escrow released',
   Reversed: 'Reversed — escrow returned',
