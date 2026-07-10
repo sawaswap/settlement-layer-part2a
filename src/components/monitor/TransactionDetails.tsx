@@ -16,8 +16,9 @@ export type ViewMode = 'institution' | 'observer'
  * Read-only detail view for one transaction (Agreement C.2 Screen 2). On-chain
  * fields render for all viewers; participant/corridor fields come from the
  * encrypted momoLegHash preimage and are gated by viewing mode — pending the
- * CID-discovery + decryption design item (IA §12.4.4), so they show as such
- * rather than being faked.
+ * CID-discovery + decryption design item (IA §12.3.3 Block C storageLocation +
+ * §12.4.1–§12.4.3 three-key encryption model), so they show as such rather than
+ * being faked.
  */
 export function TransactionDetails({
   txn,
@@ -102,7 +103,7 @@ export function TransactionDetails({
         </h2>
         <p className="mb-3 text-xs text-slate-400">
           {mode === 'institution'
-            ? 'You are a party to this transaction. Participant details are pending the preimage retrieval design item (CID discovery + decryption, IA §12.4.4).'
+            ? 'You are a party to this transaction. Participant details are pending the preimage retrieval design item (CID discovery + decryption, IA §12.3.3 + §12.4.1–§12.4.3).'
             : 'Encrypted — visible only to the transaction parties. Observers see corridor, amounts, STID and on-chain state.'}
         </p>
         <dl className="space-y-2 text-sm text-slate-400">
