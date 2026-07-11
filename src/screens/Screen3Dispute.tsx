@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
 import { isHex, type Hex } from 'viem'
 import { useAccount } from 'wagmi'
 import { useUiStore } from '@/lib/store'
@@ -11,15 +11,31 @@ import { deriveEscalation } from '@/lib/escalation'
 import { SettlementState, stateLabel, isTerminal, directionLabel, Direction } from '@/lib/state'
 import { drpOutcomeLabel } from '@/lib/drpOutcome'
 import { escrowAsset } from '@/config/contracts'
-import { env } from '@/config/env'
 import { formatAmount, formatCountdown, shortAddress } from '@/lib/format'
 import { explorerAddress } from '@/config/chain'
 import { StateBadge } from '@/components/monitor/StateBadge'
 import { TransitionHistory } from '@/components/monitor/TransitionHistory'
 import { EscalationActions } from '@/components/dispute/EscalationActions'
-import { DrpHarnessControl } from '@/components/dispute/DrpHarnessControl'
 
 const isStid = (s: string): s is Hex => isHex(s) && s.length === 66
+
+/**
+ * Production-exclusion of the DRP test harness (20260710 clarification, point c).
+ * We gate a LAZY dynamic import on the RAW `import.meta.env` literal — not the
+ * zod-parsed `env.VITE_ENABLE_DRP_HARNESS`, which is a runtime value Vite cannot
+ * statically resolve. Vite inlines the literal at build time, so a
+ * `VITE_ENABLE_DRP_HARNESS=false` build evaluates DRP_HARNESS to `false`, dead-
+ * code-eliminates the `lazy(() => import(...))`, and the harness chunk (with its
+ * `setOutcome` call) never enters `dist/`. Verified by M2.9's grep-absence check.
+ */
+const DRP_HARNESS = import.meta.env.VITE_ENABLE_DRP_HARNESS !== 'false'
+const DrpHarnessControl = DRP_HARNESS
+  ? lazy(() =>
+      import('@/components/dispute/DrpHarnessControl').then((m) => ({
+        default: m.DrpHarnessControl,
+      })),
+    )
+  : null
 
 /**
  * Screen 3 — Dispute and Escalation (Agreement C.2). Reached once a STID has
@@ -161,13 +177,15 @@ export function Screen3Dispute() {
               </div>
             )}
 
-            {env.VITE_ENABLE_DRP_HARNESS && escalation.inEscalation && !drp.resolved && (
-              <DrpHarnessControl
-                stid={transaction.stid}
-                preset={drp.preset}
-                resolved={drp.resolved}
-                onDone={refetchAll}
-              />
+            {DRP_HARNESS && DrpHarnessControl && escalation.inEscalation && !drp.resolved && (
+              <Suspense fallback={null}>
+                <DrpHarnessControl
+                  stid={transaction.stid}
+                  preset={drp.preset}
+                  resolved={drp.resolved}
+                  onDone={refetchAll}
+                />
+              </Suspense>
             )}
 
             <EscalationActions txn={transaction} escalation={escalation} onDone={refetchAll} />

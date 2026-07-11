@@ -33,6 +33,11 @@ export function EscalationActions({
   const { writeContractAsync } = useWriteContract()
   const [busy, setBusy] = useState<EscalationActionKey | null>(null)
   const [error, setError] = useState('')
+  // Invoke DRP is the one atomic, irreversible action here (it resolves the DRP
+  // and finalises to Settled/Reversed in the same transaction). It is armed by a
+  // first click, then requires an explicit confirm — guarding against an
+  // accidental fire. The other actions run on a single click.
+  const [drpArmed, setDrpArmed] = useState(false)
 
   if (!escalation.inEscalation) return null
 
@@ -41,6 +46,7 @@ export function EscalationActions({
   async function run(kind: EscalationActionKey) {
     if (!publicClient) return
     setError('')
+    setDrpArmed(false)
     setBusy(kind)
     try {
       const hash =
@@ -89,7 +95,7 @@ export function EscalationActions({
               action={a.updateClaim}
               onClick={() => run('updateClaim')}
             />
-            {/* ── Invoke DRP (contingent; point b of the 2026-07-08 clarification) ── */}
+            {/* ── Invoke DRP (armed → confirm; point b of the 2026-07-08 clarification) ── */}
             <ActionButton
               label="Invoke DRP"
               busyLabel="Invoking DRP…"
@@ -97,7 +103,7 @@ export function EscalationActions({
               busy={busy === 'invokeDRP'}
               disabled={busy !== null}
               action={a.invokeDRP}
-              onClick={() => run('invokeDRP')}
+              onClick={() => setDrpArmed(true)}
             />
             {/* ── end Invoke DRP ── */}
           </>
@@ -112,6 +118,35 @@ export function EscalationActions({
           onClick={() => run(escalation.claimExists ? 'expireTW3' : 'expireTW2')}
         />
       </div>
+
+      {drpArmed && a.invokeDRP.available && (
+        <div className="mt-3 rounded-lg border border-amber-300 bg-amber-50 p-3">
+          <p className="text-sm font-semibold text-amber-900">Confirm — Invoke DRP</p>
+          <p className="mt-1 text-xs text-amber-800">
+            This resolves the DRP and finalises the transaction to{' '}
+            <span className="font-medium">Settled</span> or{' '}
+            <span className="font-medium">Reversed</span> in the same transaction. It is atomic and
+            cannot be undone. The outcome follows the DRP’s decision (on this testnet, the MockDRP
+            preset for this STID).
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <button
+              onClick={() => run('invokeDRP')}
+              disabled={busy !== null}
+              className="rounded bg-amber-600 px-3 py-2 text-sm font-medium text-white hover:bg-amber-700 disabled:opacity-50"
+            >
+              {busy === 'invokeDRP' ? 'Invoking DRP…' : 'Confirm — finalise now'}
+            </button>
+            <button
+              onClick={() => setDrpArmed(false)}
+              disabled={busy !== null}
+              className="rounded border border-slate-300 px-3 py-2 text-sm font-medium hover:bg-slate-50 disabled:opacity-50"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
 
       <p className="mt-2 text-xs text-slate-500">
         Submit Claim, Update Claim and Invoke DRP are callable only by the eligibleClaimant wallet.

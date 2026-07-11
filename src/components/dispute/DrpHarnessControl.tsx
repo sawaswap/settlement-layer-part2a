@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { type Hex } from 'viem'
 import { usePublicClient, useWriteContract } from 'wagmi'
 import { contracts } from '@/config/contracts'
+import { mockDrpAbi } from '@/abi/mockdrp'
 import { DrpOutcome, drpOutcomeLabel } from '@/lib/drpOutcome'
 import { friendlyContractError } from '@/lib/contractErrors'
 
@@ -41,7 +42,8 @@ export function DrpHarnessControl({
     setBusy(outcome)
     try {
       const hash = await writeContractAsync({
-        ...contracts.mockDrp,
+        address: contracts.mockDrp.address,
+        abi: mockDrpAbi,
         functionName: 'setOutcome',
         args: [stid, outcome],
       })
@@ -60,8 +62,12 @@ export function DrpHarnessControl({
         MockDRP outcome · test harness
       </h2>
       <p className="mb-3 text-xs text-amber-700">
-        Presets the outcome the MockDRP returns when the DRP is invoked, so both DRP terminals are
-        demonstrable without a command line. MockDRP is a test stub, not a production DRP.
+        This <span className="font-medium">stands in for the production DRP’s independent decision,
+        which is not yet built</span>. It presets the verdict the MockDRP will return when the DRP is
+        invoked, so both DRP terminals (Settled / Reversed) can be demonstrated browser-only. It is
+        scaffolding for the testnet demo — <span className="font-medium">not</span> the operator
+        choosing the outcome; a production DRP would decide independently and this control would not
+        exist.
         {resolved && ' The DRP has already resolved this transaction — presetting no longer applies.'}
       </p>
       <div className="flex flex-wrap items-center gap-2">
