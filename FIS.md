@@ -47,7 +47,7 @@ The canonical seven-field struct (adding `tokenAddress` + `momoCurrency`) is the
 
 ### MockDRP — functions used
 
-The deployed MockDRP is a **test stub** (not a production DRP). It returns a per-STID preset outcome from `resolve`, settable by any caller.
+The deployed MockDRP is a **test stub** (not a production DRP). It returns a per-STID preset outcome from `resolve`, settable by any caller. On an **unset** STID `resolve` returns the zero value `Outcome(0)` = **Settled** — so an un-preset STID resolves to Settled; presetting Reversed is the explicit step. This default matters for the demo: to exhibit **DRP-Reversed** browser-only, the outcome must be preset to Reversed before Invoke DRP (a Settled outcome needs no preset).
 
 | Function | Signature | Returns | Purpose / screen |
 | --- | --- | --- | --- |
@@ -122,6 +122,10 @@ On-chain `State` enum (ordering is the ABI — do not reorder): `PoICommitted(0)
 - **Invoke DRP** (Screen 3) — state `EscalationL1`, claim exists, within the full window, eligibleClaimant, not already invoked.
 - **Trigger TW2 Expiry** (`expireTW2`, Screen 3) — state `EscalationL1`, TW2 elapsed, **no** claim (permissionless).
 - **Trigger TW3 Expiry** (`expireTW3`, Screen 3) — state `EscalationL1`, full window elapsed, **claim** on record (permissionless).
+
+**Invoke DRP ↔ expireTW3 are complementary at `tw3Deadline`.** Both derive their window test from the **same** comparison — `tw3Expired = now > tw3Deadline` (the contract's strict `>`, so the boundary second `now == tw3Deadline` still belongs to the DRP window). Invoke DRP requires `!tw3Expired`; expireTW3 requires `tw3Expired`. For an eligible claimant with a claim on record and the DRP not yet invoked, exactly **one** of the two is ever available — never both, never neither — and the hand-off is atomic at the boundary: while the DRP window is open the claimant may adjudicate, and the instant it closes the transaction default-reverses. A boundary unit test (`escalation.test.ts`) pins this at `now == tw3Deadline` and `now == tw3Deadline + 1`.
+
+**Invoke DRP requires an explicit confirm.** It is the one atomic, irreversible action on Screen 3 — it resolves the DRP and finalises to Settled/Reversed in the **same** transaction. The button therefore arms on a first click and requires a second, explicit confirm (stating the irreversibility) before it fires; the other actions are single-click.
 
 ---
 
@@ -218,6 +222,8 @@ The Console reflects two distinct authority models — one global, one per-trans
 
 **Test-harness authority.** The Screen 3 MockDRP-outcome control (`setOutcome`) is **permissionless** — the mock has no access control — and is env-gated (`VITE_ENABLE_DRP_HARNESS`). It touches only the test stub and carries no production-role meaning.
 
+**Production-absence property (not merely hidden).** `VITE_ENABLE_DRP_HARNESS=false` does not just hide the control — it **structurally excludes** it from the build. `Screen3Dispute` gates a `lazy(() => import('DrpHarnessControl'))` on the **raw** `import.meta.env.VITE_ENABLE_DRP_HARNESS` literal, which Vite inlines at build time and then dead-code-eliminates, so the harness chunk is never emitted; the harness-only `setOutcome` write carries the full MockDRP ABI **inside** that chunk, while the always-loaded status handle uses a read-only `preset`/`called` subset (`src/abi/mockdrp.read.ts`). A `VITE_ENABLE_DRP_HARNESS=false` build therefore contains **no** `DrpHarnessControl` chunk and **no** occurrence of `setOutcome` anywhere in `dist/` — verify with `grep -rn setOutcome dist/` (empty on a `false` build; present in the harness chunk on the default build). This is the M2 production-deploy acceptance check.
+
 ## f. Chain-Agnostic Adaptation Notes
 
 This is the primary reusability asset (Agreement §, "reusable protocol artefact … for future implementations on other chains"). **No chain- or asset-specific literal appears in component logic** — every such value is env-driven and validated once at startup (`src/config/env.ts`, zod).
@@ -233,7 +239,7 @@ This is the primary reusability asset (Agreement §, "reusable protocol artefact
 | `VITE_USDC_ADDRESS` / `VITE_USDC_SYMBOL` / `VITE_USDC_DECIMALS` | the escrow asset (address + display) |
 | `VITE_WALLETCONNECT_PROJECT_ID` | WalletConnect (Client-held in production, E.2) |
 | `VITE_INDEX_FROM_BLOCK` | Screen 4 discovery lower bound (default = the Settlement deploy block) |
-| `VITE_ENABLE_DRP_HARNESS` | show/hide the Screen 3 MockDRP-outcome control |
+| `VITE_ENABLE_DRP_HARNESS` | include/exclude the Screen 3 MockDRP-outcome test harness; `false` **structurally tree-shakes** it out of the build (no chunk, no `setOutcome`) — see §e |
 
 **Porting.**
 - **Another EVM chain (Celo, BNB Chain).** Env change only: deploy the Settlement + MockDRP there, point the addresses/chain/RPC/explorer at the new network, set `VITE_INDEX_FROM_BLOCK` to the new deploy block. No component, hook, state-machine, or slot-mapping code changes — viem/wagmi are chain-generic and the ABIs are identical.
