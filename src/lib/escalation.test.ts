@@ -114,4 +114,65 @@ describe('escalation-action derivation (deployed-contract semantics)', () => {
     expect(v.actions.invokeDRP.available).toBe(false)
     expect(v.actions.expireTW2.available).toBe(false) // claim pending
   })
+
+  // Both deadline pairs are strictly complementary at their boundary: each side derives from the
+  // SAME `now > deadline` comparison (the contract's strict `>`), so the equality instant
+  // `now == deadline` still belongs to the in-window action, and `+1` flips to the poker. Pinned
+  // at the exact boundary second for the TW2 pair (submitClaim ↔ expireTW2) and the TW3 pair
+  // (invokeDRP ↔ expireTW3) so a future off-by-one in `deriveEscalation` fails here.
+  describe('deadline-pair complementarity at the equality instant', () => {
+    it('TW2 pair at now == tw2Deadline (1_000_300) → Submit Claim open, expireTW2 not', () => {
+      const v = derive({ claimExists: false, nowSeconds: 1_000_300 })
+      expect(v.tw2Deadline).toBe(1_000_300)
+      expect(v.actions.submitClaim.available).toBe(true)
+      expect(v.actions.expireTW2.available).toBe(false)
+    })
+
+    it('TW2 pair at now == tw2Deadline + 1 → Submit Claim closed, expireTW2 open', () => {
+      const v = derive({ claimExists: false, nowSeconds: 1_000_301 })
+      expect(v.actions.submitClaim.available).toBe(false)
+      expect(v.actions.expireTW2.available).toBe(true)
+    })
+
+    it('TW3 pair at now == tw3Deadline (1_000_600) → Invoke DRP open, expireTW3 not', () => {
+      const v = derive({ claimExists: true, nowSeconds: 1_000_600 })
+      expect(v.tw3Deadline).toBe(1_000_600)
+      expect(v.actions.invokeDRP.available).toBe(true)
+      expect(v.actions.expireTW3.available).toBe(false)
+    })
+
+    it('TW3 pair at now == tw3Deadline + 1 → Invoke DRP closed, expireTW3 open', () => {
+      const v = derive({ claimExists: true, nowSeconds: 1_000_601 })
+      expect(v.actions.invokeDRP.available).toBe(false)
+      expect(v.actions.expireTW3.available).toBe(true)
+    })
+
+    it('across each boundary exactly one side is enabled — never both, never neither', () => {
+      // TW2 pair (no claim): submitClaim vs expireTW2.
+      for (let now = 1_000_298; now <= 1_000_303; now++) {
+        const v = derive({ claimExists: false, nowSeconds: now })
+        expect(v.actions.submitClaim.available).toBe(now <= 1_000_300)
+        expect(v.actions.expireTW2.available).toBe(now > 1_000_300)
+      }
+      // TW3 pair (claim on record, eligible, not yet invoked): invokeDRP vs expireTW3.
+      for (let now = 1_000_598; now <= 1_000_603; now++) {
+        const v = derive({ claimExists: true, nowSeconds: now })
+        expect(v.actions.invokeDRP.available).toBe(now <= 1_000_600)
+        expect(v.actions.expireTW3.available).toBe(now > 1_000_600)
+      }
+    })
+  })
+
+  // Isolates the invokeDRP eligibleClaimant gate: with a claim on record and the DRP window still
+  // open (in-window, not yet invoked), a NON-eligible wallet is blocked solely by the claimant
+  // gate — every other precondition is satisfied, so the reason names eligibleClaimant, and the
+  // permissionless expireTW3 stays closed because the window has not elapsed.
+  it('invokeDRP eligibleClaimant gate: claim on record, in-window, non-eligible wallet → blocked on eligibility only', () => {
+    const v = derive({ claimExists: true, isEligibleClaimant: false, nowSeconds: IN_TW3 })
+    expect(v.actions.invokeDRP.available).toBe(false)
+    expect(v.actions.invokeDRP.reason).toMatch(/eligibleClaimant/i)
+    // proof the block is the gate, not the window or a missing claim:
+    expect(v.tw3Expired).toBe(false) // still in-window
+    expect(v.actions.expireTW3.available).toBe(false) // window not elapsed
+  })
 })
