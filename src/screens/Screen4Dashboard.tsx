@@ -19,6 +19,7 @@ import { escrowAsset } from '@/config/contracts'
 import { explorerAddress } from '@/config/chain'
 import { formatAmount, formatCountdown, shortAddress } from '@/lib/format'
 import { StateBadge } from '@/components/monitor/StateBadge'
+import { PendingPreimage } from '@/components/common/PendingPreimage'
 
 const directionShort: Record<Direction, string> = {
   [Direction.CMM]: 'CMM',
@@ -208,7 +209,7 @@ function TxCard({ row, now }: { row: AgentTxRow; now: number }) {
           <Addr address={agentB} />
         </Row>
         <Row label="Corridor / operator">
-          <span className="text-slate-400">— (pending preimage retrieval)</span>
+          <PendingPreimage />
         </Row>
         <Row label="DRP invoked">{row.drpInvoked ? 'Yes' : 'No'}</Row>
       </dl>
