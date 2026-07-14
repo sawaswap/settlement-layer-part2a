@@ -8,7 +8,7 @@ import { explorerTx } from '@/config/chain'
 import { useAdminRole } from '@/hooks/useAdminRole'
 import { useUiStore } from '@/lib/store'
 import { Direction, directionLabel } from '@/lib/state'
-import { resolveSlots, beneficiaryLabel } from '@/lib/slots'
+import { resolveSlots, beneficiaryLabel, isForbiddenParty } from '@/lib/slots'
 import { computeMomoLegHash, PREIMAGE_VERSION, type MomoLegPreimage } from '@/lib/momoLegHash'
 import { friendlyConnectError } from '@/lib/walletErrors'
 import { formatAmount, shortAddress } from '@/lib/format'
@@ -122,6 +122,17 @@ function InitiateForm({ originator }: { originator?: Address }) {
       beneficiary: form.beneficiary as Address,
       userCRelay: isCmm ? (form.userCRelay as Address) : undefined,
     })
+
+    // KRAIT-001 client-side mitigation: neither party may be the Settlement
+    // contract, the escrow-token contract, or the zero address — escrow that
+    // resolves to any of these is permanently locked. Checked on the resolved
+    // slots (the exact addresses commitPoI would write) before composing it.
+    const forbidden = [contracts.settlement.address, contracts.usdc.address]
+    if (isForbiddenParty(slots.beneficiary, forbidden))
+      errors.push('Beneficiary cannot be the Settlement contract, the escrow-token contract, or the zero address (escrow would be permanently locked).')
+    if (isForbiddenParty(slots.eligibleClaimant, forbidden))
+      errors.push('eligibleClaimant cannot be the Settlement contract, the escrow-token contract, or the zero address (escrow would be permanently locked).')
+    if (errors.length) return { errors }
 
     const preimage: MomoLegPreimage = {
       version: PREIMAGE_VERSION,

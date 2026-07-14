@@ -59,6 +59,23 @@ export function resolveSlots(input: SlotInputs): ResolvedSlots {
   }
 }
 
+export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000' as const
+
+/**
+ * KRAIT-001 client-side mitigation. An address that must never be written as a
+ * `beneficiary` or `eligibleClaimant`: the zero address, or a contract that is
+ * part of the settlement machinery itself (the Settlement contract or the escrow
+ * token). Escrow that resolves to any of these is permanently locked — no party
+ * can claim or reverse it — so the Console blocks the commit client-side before
+ * `commitPoI`. Comparison is case-insensitive (checksummed vs lower-case forms
+ * denote the same address). This is a testnet safety rail, not the contract-side
+ * fix (that is Part-1-repo work, tracked separately).
+ */
+export function isForbiddenParty(addr: Address, forbidden: readonly Address[]): boolean {
+  const a = addr.toLowerCase()
+  return a === ZERO_ADDRESS || forbidden.some((f) => f.toLowerCase() === a)
+}
+
 /** Human label for the beneficiary input, by direction. */
 export const beneficiaryLabel: Record<Direction, string> = {
   [Direction.CMM]: 'Agent B wallet (beneficiary)',
