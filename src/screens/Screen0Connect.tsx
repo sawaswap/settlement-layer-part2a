@@ -6,6 +6,7 @@ import { useCorrectNetwork } from '@/hooks/useCorrectNetwork'
 import { useAdminRole } from '@/hooks/useAdminRole'
 import { shortAddress } from '@/lib/format'
 import { appChain } from '@/config/chain'
+import logoUrl from '@/assets/sawaswap-logo.png'
 
 /**
  * Screen 0 — Wallet Connection and Network Verification (Agreement C.2).
@@ -20,6 +21,7 @@ export function Screen0Connect() {
 
   return (
     <div className="mx-auto max-w-lg">
+      <img src={logoUrl} alt="SawaSwap" className="mx-auto mb-6 h-24 w-auto" />
       <h1 className="text-xl font-semibold">Connect wallet</h1>
       <p className="mt-1 text-sm text-slate-500">
         Connect a wallet and confirm the {appChain.name} network to use the Operator Console.

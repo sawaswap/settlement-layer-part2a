@@ -6,6 +6,7 @@ import { env } from '@/config/env'
 import { appChain } from '@/config/chain'
 import { shortAddress } from '@/lib/format'
 import { Badge } from '@/components/ui/Badge'
+import markUrl from '@/assets/sawaswap-mark.png'
 
 /**
  * Persistent header (Agreement C.2) — present on every screen without
@@ -34,13 +35,9 @@ export function Header() {
     <header className="border-b border-slate-200 bg-white">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
         <div className="flex items-center gap-2">
-          {/* Logo placeholder — Client to supply SVG/PNG; integrated on receipt (C.2). */}
-          <div
-            aria-hidden
-            className="grid h-7 w-7 place-items-center rounded bg-sky-600 text-sm font-bold text-white"
-          >
-            S
-          </div>
+          {/* SawaSwap logo mark (Client-supplied, C.2 / D10). Icon-only lockup for the persistent
+              header; the full stacked lockup appears on the Connect screen. */}
+          <img src={markUrl} alt="SawaSwap" className="h-7 w-7 shrink-0" width={28} height={28} />
           <span className="text-sm font-semibold tracking-tight">{env.VITE_APP_NAME}</span>
         </div>
 
