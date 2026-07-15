@@ -2,7 +2,7 @@ import type { Address } from 'viem'
 import { getAddress } from 'viem'
 import { env } from './env'
 import { settlementAbi } from '@/abi/settlement'
-import { mockDrpAbi } from '@/abi/mockdrp'
+import { mockDrpReadAbi } from '@/abi/mockdrp.read'
 import { erc20Abi } from '@/abi/erc20'
 
 /**
@@ -21,9 +21,13 @@ export const contracts = {
     address: getAddress(env.VITE_SETTLEMENT_ADDRESS) as Address,
     abi: settlementAbi,
   },
+  // Read-only handle (preset/called) for the always-loaded Screen 3 status hook.
+  // The harness-only `setOutcome` write carries its own ABI (full mockDrpAbi,
+  // imported inside DrpHarnessControl) so it tree-shakes out when the harness is
+  // disabled — see src/abi/mockdrp.read.ts.
   mockDrp: {
     address: getAddress(env.VITE_MOCKDRP_ADDRESS) as Address,
-    abi: mockDrpAbi,
+    abi: mockDrpReadAbi,
   },
   usdc: {
     address: getAddress(env.VITE_USDC_ADDRESS) as Address,
