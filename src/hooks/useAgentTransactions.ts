@@ -69,6 +69,10 @@ export function useAgentTransactions(wallet?: Address) {
       }
 
       const built: AgentTxRow[] = []
+      // TODO(scaling): the two reads per STID are batched, but the loop is
+      // sequential across STIDs — comfortable at testnet volumes, but ~2×MAX_ROWS
+      // sequential calls at the cap. Move to multicall / chunked batching before an
+      // Agent B wallet accumulates real history (PR #8 review, Comment 1).
       for (const stid of stids) {
         const [txn, porHash] = await Promise.all([
           publicClient.readContract({
