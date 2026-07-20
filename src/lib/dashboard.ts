@@ -1,5 +1,6 @@
 import type { Hex } from 'viem'
-import { SettlementState, activeWindow, Direction, type TimeWindow } from './state'
+import { SettlementState, Direction, type TimeWindow } from './state'
+import { windowInfo } from './windows'
 
 /**
  * A row in the Agent B dashboard (Agreement C.2 Screen 4). Discovery is by the
@@ -57,16 +58,27 @@ export function matchesStateFilter(state: SettlementState, f: StateFilter): bool
   }
 }
 
-export function matchesWindowFilter(state: SettlementState, f: WindowFilter): boolean {
-  return f === 'all' ? true : activeWindow[state] === f
+/**
+ * The time window a row is effectively in, by the deadlines rather than by state
+ * alone. This is the same derivation the TxCard uses (windowInfo), so the filter
+ * and the card never disagree — in particular a claimed EscalationL1 row past its
+ * tw2Deadline reports TW3 (its DRP / default-reverse span), not TW2.
+ */
+export function rowWindow(row: AgentTxRow, now: number): TimeWindow {
+  return windowInfo(row.state, row.committedAt, row.tw1, row.tw2, row.tw3, now).label
+}
+
+export function matchesWindowFilter(row: AgentTxRow, f: WindowFilter, now: number): boolean {
+  return f === 'all' ? true : rowWindow(row, now) === f
 }
 
 export function filterRows(
   rows: AgentTxRow[],
   stateFilter: StateFilter,
   windowFilter: WindowFilter,
+  now: number,
 ): AgentTxRow[] {
   return rows.filter(
-    (r) => matchesStateFilter(r.state, stateFilter) && matchesWindowFilter(r.state, windowFilter),
+    (r) => matchesStateFilter(r.state, stateFilter) && matchesWindowFilter(r, windowFilter, now),
   )
 }

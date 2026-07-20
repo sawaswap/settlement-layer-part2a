@@ -42,8 +42,8 @@ export function Screen4Dashboard() {
   const [windowFilter, setWindowFilter] = useState<WindowFilter>('all')
 
   const visible = useMemo(
-    () => filterRows(rows, stateFilter, windowFilter),
-    [rows, stateFilter, windowFilter],
+    () => filterRows(rows, stateFilter, windowFilter, now),
+    [rows, stateFilter, windowFilter, now],
   )
 
   return (

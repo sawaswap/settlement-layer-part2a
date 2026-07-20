@@ -44,10 +44,23 @@ export function windowInfo(
       label = 'TW1'
       endsAt = c + t1
       break
-    case SettlementState.EscalationL1:
-      label = 'TW2'
-      endsAt = c + t1 + t2
+    case SettlementState.EscalationL1: {
+      // Under the deployed semantics invokeDRP is atomic — nothing ever rests in
+      // EscalationL2_DRP — so a claimed transaction lives its TW3 span inside
+      // EscalationL1. Advance the window by the deadlines, not by state: TW2 (the
+      // claim window) until tw2Deadline, then TW3 (the DRP / default-reverse span
+      // ending at tw3Deadline). A state-only mapping would pin the whole of
+      // EscalationL1 to TW2 and make the TW3 view unreachable.
+      const tw2Deadline = c + t1 + t2
+      if (nowSeconds > tw2Deadline) {
+        label = 'TW3'
+        endsAt = c + t1 + t2 + t3
+      } else {
+        label = 'TW2'
+        endsAt = tw2Deadline
+      }
       break
+    }
     case SettlementState.EscalationL2_DRP:
       label = 'TW3'
       endsAt = c + t1 + t2 + t3

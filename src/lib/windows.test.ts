@@ -28,6 +28,20 @@ describe('time-window derivation', () => {
     expect(w.endsAt).toBe(1_000_300) // committedAt + tw1 + tw2
   })
 
+  it('EscalationL1 advances TW2 → TW3 by the tw2 deadline', () => {
+    // Deployed semantics: invokeDRP is atomic, so nothing rests in
+    // EscalationL2_DRP — a claimed row lives its TW3 span inside EscalationL1.
+    // Before tw2Deadline (1_000_300) it is the TW2 claim window…
+    const inTw2 = windowInfo(SettlementState.EscalationL1, committedAt, tw1, tw2, tw3, 1_000_250)
+    expect(inTw2.label).toBe('TW2')
+    expect(inTw2.endsAt).toBe(1_000_300)
+    // …past it, the row is in its TW3 (DRP / default-reverse) span, still EscalationL1.
+    const inTw3 = windowInfo(SettlementState.EscalationL1, committedAt, tw1, tw2, tw3, 1_000_400)
+    expect(inTw3.label).toBe('TW3')
+    expect(inTw3.endsAt).toBe(1_000_600) // committedAt + tw1 + tw2 + tw3
+    expect(inTw3.expired).toBe(false)
+  })
+
   it('TW3 stacks on TW1+TW2 in EscalationL2_DRP', () => {
     const w = windowInfo(SettlementState.EscalationL2_DRP, committedAt, tw1, tw2, tw3, 1_000_000)
     expect(w.label).toBe('TW3')
