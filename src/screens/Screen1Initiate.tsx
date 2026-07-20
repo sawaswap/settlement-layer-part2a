@@ -312,7 +312,7 @@ function InitiateForm({ originator }: { originator?: Address }) {
             </div>
           )}
 
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
             <TextInput label="Country" value={form.destCountry} onChange={(v) => set('destCountry', v)} />
             <TextInput label="Operator (MNO)" value={form.destMno} onChange={(v) => set('destMno', v)} />
             <TextInput label="Currency" value={form.destCurrency} onChange={(v) => set('destCurrency', v)} />
