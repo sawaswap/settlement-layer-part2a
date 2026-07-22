@@ -91,7 +91,10 @@ pnpm build            # → dist/ (typecheck + Vite build)
 
 - **Vercel/Netlify:** set the build command to `pnpm build` and the output
   directory to `dist`. Add the `.env` variables in the project's environment
-  settings. Enable SPA history fallback (rewrite all routes to `/index.html`).
+  settings. SPA history fallback (rewrite all routes to `/index.html`, required
+  because the app uses client-side routing so a direct load or refresh of e.g.
+  `/dispute` must serve the app, not a 404) is checked in as `vercel.json`; on
+  Netlify add the equivalent `/* /index.html 200` redirect.
 - **Custom subdomain** (e.g. `console.sawaswap.io`): DNS is the Client's
   responsibility; the Developer configures the host project to receive it. Absent
   a subdomain, the platform URL (e.g. `*.vercel.app`) satisfies the deployment
