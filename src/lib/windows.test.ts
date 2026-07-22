@@ -42,6 +42,16 @@ describe('time-window derivation', () => {
     expect(inTw3.expired).toBe(false)
   })
 
+  it('EscalationL1 flips at the exact tw2Deadline second (strict >)', () => {
+    // Pins the boundary to the second — the check above uses a before/after pair
+    // with a gap. Convention matches the tw3Deadline/expired boundary: strict >.
+    const tw2Deadline = 1_000_300 // committedAt + tw1 + tw2
+    const at = windowInfo(SettlementState.EscalationL1, committedAt, tw1, tw2, tw3, tw2Deadline)
+    expect(at.label).toBe('TW2') // AT the deadline it is still TW2
+    const past = windowInfo(SettlementState.EscalationL1, committedAt, tw1, tw2, tw3, tw2Deadline + 1)
+    expect(past.label).toBe('TW3') // one second past, it is TW3
+  })
+
   it('TW3 stacks on TW1+TW2 in EscalationL2_DRP', () => {
     const w = windowInfo(SettlementState.EscalationL2_DRP, committedAt, tw1, tw2, tw3, 1_000_000)
     expect(w.label).toBe('TW3')

@@ -8,6 +8,7 @@ import { useMockDrpStatus } from '@/hooks/useMockDrpStatus'
 import { useTransactionHistory } from '@/hooks/useTransactionHistory'
 import { useChainNow } from '@/hooks/useChainNow'
 import { deriveEscalation } from '@/lib/escalation'
+import { windowInfo } from '@/lib/windows'
 import { SettlementState, stateLabel, isTerminal, directionLabel, Direction } from '@/lib/state'
 import { drpOutcomeLabel } from '@/lib/drpOutcome'
 import { escrowAsset } from '@/config/contracts'
@@ -155,7 +156,10 @@ export function Screen3Dispute() {
               drpInvoked={transaction.drpInvoked}
               drpPreset={drp.preset}
               drpResolved={drp.resolved}
-              tw3Deadline={escalation.tw3Deadline}
+              committedAt={transaction.committedAt}
+              tw1={transaction.tw1}
+              tw2={transaction.tw2}
+              tw3={transaction.tw3}
               now={now}
             />
 
@@ -208,7 +212,10 @@ function DisputeStatus({
   drpInvoked,
   drpPreset,
   drpResolved,
-  tw3Deadline,
+  committedAt,
+  tw1,
+  tw2,
+  tw3,
   now,
 }: {
   stid: Hex
@@ -220,12 +227,18 @@ function DisputeStatus({
   drpInvoked: boolean
   drpPreset: number | undefined
   drpResolved: boolean
-  tw3Deadline: number
+  committedAt: bigint
+  tw1: bigint
+  tw2: bigint
+  tw3: bigint
   now: number
 }) {
-  const inEscalation = state === SettlementState.EscalationL1
-  const tw3Remaining = Math.max(0, tw3Deadline - now)
-  const tw3Expired = now > tw3Deadline
+  // Single source of truth for the window (FIS §b): the same derivation the
+  // Monitor and the dashboard use — TW2 until tw2Deadline, then TW3 (claimed
+  // rows hold EscalationL1 across both spans). Previously this panel labelled
+  // the window "TW3" statically and counted to tw3Deadline, so it disagreed with
+  // the Monitor for a claimed row still inside its TW2 span.
+  const window = windowInfo(state, committedAt, tw1, tw2, tw3, now)
 
   return (
     <section className="rounded-lg border border-slate-200 bg-white p-4">
@@ -251,13 +264,16 @@ function DisputeStatus({
           </a>
         </Row>
         <Row label="Claim on record">{claimExists ? 'Yes' : 'No'}</Row>
-        {inEscalation && claimExists && (
-          <Row label="DRP window (TW3)">
-            {tw3Expired ? (
-              <span className="text-amber-700">expired</span>
-            ) : (
-              <span className="tabular-nums">{formatCountdown(tw3Remaining)} remaining</span>
-            )}
+        {window.label && (
+          <Row label="Active window">
+            <span>
+              {window.label} ·{' '}
+              {window.expired ? (
+                <span className="text-amber-700">expired</span>
+              ) : (
+                <span className="tabular-nums">{formatCountdown(window.remaining)} remaining</span>
+              )}
+            </span>
           </Row>
         )}
         <Row label="DRP status">
