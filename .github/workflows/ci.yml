@@ -25,6 +25,12 @@ jobs:
       - name: Provision env for build
         run: cp .env.example .env
 
+      - name: Verify the vendored @sawaswap packages
+        run: pnpm verify:vendored
+
+      - name: Run the vendored packages' own tests against the installed build
+        run: pnpm test:vendored
+
       - run: pnpm typecheck
       - run: pnpm lint
       - run: pnpm test
