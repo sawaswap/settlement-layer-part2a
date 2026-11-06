@@ -1,0 +1,93 @@
+{
+  "package": "@sawaswap/chain-client",
+  "version": "0.1.0",
+  "sourceRepository": "https://github.com/sawaswapHQ/settlement-layer-part2b",
+  "sourceCommit": "2695f52d315e19d1868cd5a425d6647bd3715965",
+  "sourcePath": "packages/chain-client",
+  "builtBy": "tools/vendor-packages.mjs",
+  "toolchain": {
+    "node": "v24.6.0",
+    "typescript": "6.0.3"
+  },
+  "conformanceTests": "dist/test",
+  "tarball": "sawaswap-chain-client-0.1.0.tgz",
+  "tarballSha256": "36b8bff9298d8d634930d8150308b447201d1adcd34c0a30b6c21e064f46b9d1",
+  "files": [
+    {
+      "path": "PROVENANCE.json",
+      "sha256": "13200b277195031c5da3ff6f3cca53707bf4823fa85930529db0ca3255721d27"
+    },
+    {
+      "path": "dist/src/abi/settlement.d.ts",
+      "sha256": "eb2d7d224cb93830430478b0ca8954a062e67b385029cb688b18ef8f8647d331"
+    },
+    {
+      "path": "dist/src/abi/settlement.js",
+      "sha256": "5a2309a5d4cdcd74f7f9ba90369c9fb51bda2450fd728d0aef75ad4e2f06319d"
+    },
+    {
+      "path": "dist/src/index.d.ts",
+      "sha256": "b1f24f5d6aac705832bd9b683b9cfceeb96fcf088a7746891110deaa9d0732e1"
+    },
+    {
+      "path": "dist/src/index.js",
+      "sha256": "03f1194e42d3d46bbfee29f7b9cf1900f035acf99e1ee601afcf85862155b70f"
+    },
+    {
+      "path": "dist/src/role.d.ts",
+      "sha256": "c40ea53c83586d1ef7fccb67795fb6e8c9f091039fd9bfce4577955566af8118"
+    },
+    {
+      "path": "dist/src/role.js",
+      "sha256": "0cf365f95d51b80800329fe768fec22f0495669da7408f46d9d37acc773f03f1"
+    },
+    {
+      "path": "dist/src/signer.d.ts",
+      "sha256": "e4fc955547dcb13b51c660d759c93e3a0c48ea80b3871897b1bdca78f3558625"
+    },
+    {
+      "path": "dist/src/signer.js",
+      "sha256": "d648d947aae926d1e14e89a8d4de656115baf9b46cca375b737978c0e16c1f23"
+    },
+    {
+      "path": "dist/src/watcher.d.ts",
+      "sha256": "ea4cc33b8c24dab371a68dc152d2fabb436be3cc453a48779117c67689e2057d"
+    },
+    {
+      "path": "dist/src/watcher.js",
+      "sha256": "f26c7bb8d29dfac24ffa8e86534778f9253bca994257680573cccadf0a54a7d5"
+    },
+    {
+      "path": "dist/src/writer.d.ts",
+      "sha256": "be412493feb7b3b4368f50b9510fd952cb5eec925b05cd4f2c3fdd8d81652896"
+    },
+    {
+      "path": "dist/src/writer.js",
+      "sha256": "08f111e658c875452a618079f33e46d91e7d10090e15c383db7535cebf4c6a85"
+    },
+    {
+      "path": "dist/test/index.test.js",
+      "sha256": "a67ed85e889d4771d2ee9ff4e91dc6136ffbec03fb9a4bb2a7e9f2d473ebba3b"
+    },
+    {
+      "path": "dist/test/role.test.js",
+      "sha256": "45308b0ccca39f700b3fa62b81b44ba1b563e4655839b3d364dabf47ea3d485b"
+    },
+    {
+      "path": "dist/test/signer.test.js",
+      "sha256": "92f81dbe91b190421d5d9a8291dc5f4209fc8b22f4523735a96d6c34d6925c4b"
+    },
+    {
+      "path": "dist/test/watcher.test.js",
+      "sha256": "a091b4620e001d68eb6d5a9aaa73be5aaf5a580e7286aa8cdbe58d39ca81b3bd"
+    },
+    {
+      "path": "dist/test/writer.test.js",
+      "sha256": "e022c739103f4a54aae2d7765006da0d6cfe3e7bce6e24f6cce2ac33843ccf91"
+    },
+    {
+      "path": "package.json",
+      "sha256": "2c3fb5da15d15a7520f1e2de61144a8de16e1f8d3c84f95a5b87e90e08a6c2ab"
+    }
+  ]
+}

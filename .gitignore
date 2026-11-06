@@ -61,6 +61,8 @@ web_modules/
 
 # Output of 'npm pack'
 *.tgz
+# The vendored @sawaswap packages are committed tarballs (vendor/sawaswap/README.md).
+!vendor/sawaswap/*.tgz
 
 # Yarn Integrity file
 .yarn-integrity

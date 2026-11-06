@@ -1,0 +1,161 @@
+{
+  "package": "@sawaswap/crypto",
+  "version": "0.1.0",
+  "sourceRepository": "https://github.com/sawaswapHQ/settlement-layer-part2b",
+  "sourceCommit": "2695f52d315e19d1868cd5a425d6647bd3715965",
+  "sourcePath": "packages/crypto",
+  "builtBy": "tools/vendor-packages.mjs",
+  "toolchain": {
+    "node": "v24.6.0",
+    "typescript": "6.0.3"
+  },
+  "conformanceTests": "dist/test",
+  "tarball": "sawaswap-crypto-0.1.0.tgz",
+  "tarballSha256": "97fa583b59078c0a9b542d573f3ea8efa3caf36bf38904917c435f2b1faac9bc",
+  "files": [
+    {
+      "path": "PROVENANCE.json",
+      "sha256": "24426ac14e49ec4435f72451bedfad29d0d34b0645c24b3605e7fde6a5305b2c"
+    },
+    {
+      "path": "dist/src/base64.d.ts",
+      "sha256": "ca01e70b3805e2bbf7318fea0fc929a0d463fe51d883319ece0bc808188ae9f9"
+    },
+    {
+      "path": "dist/src/base64.js",
+      "sha256": "138b6420066bcdaf6336c525a88b4c30944117968786db3873233963fc02e131"
+    },
+    {
+      "path": "dist/src/box.d.ts",
+      "sha256": "c8a2f3c4af0921ea6a17be294377adcbbb3cb197c43f0413525a1a1426a46708"
+    },
+    {
+      "path": "dist/src/box.js",
+      "sha256": "b51679f4e112294a7508feda2925cf1a58a5607fff72e5aaf3755d5c4d00fbc1"
+    },
+    {
+      "path": "dist/src/consumer-context.d.ts",
+      "sha256": "3770b47c6af8761d068917052a2ad39e42122f69383056f36ef37cc1f48b42ed"
+    },
+    {
+      "path": "dist/src/consumer-context.js",
+      "sha256": "30e810268a7bdedfb03e21305214b4b24ccf9c8f4e245207ec15fa4b362c8b14"
+    },
+    {
+      "path": "dist/src/endpoint.d.ts",
+      "sha256": "d8f52284d2fb3fbd7d7f35ea5dce76f77587c1907f12bf44a2dd1bb7bfc24de0"
+    },
+    {
+      "path": "dist/src/endpoint.js",
+      "sha256": "6eb5ef2e5ce22d60cbf112fadff3619868cb4489f04e9f5a85571513c4c95fb4"
+    },
+    {
+      "path": "dist/src/index.d.ts",
+      "sha256": "4695481407c723647a0bdfa789c3603af521c8b16490a740effc71924ff5cb7b"
+    },
+    {
+      "path": "dist/src/index.js",
+      "sha256": "272138bd54de5cb960698f0221af7040b5bd61bc204b90c075feb68c0420c252"
+    },
+    {
+      "path": "dist/src/keystore.d.ts",
+      "sha256": "32ca33501a4ed60868c76dbf04a39b2a451a099f6662a112151c4c90a0c556ff"
+    },
+    {
+      "path": "dist/src/keystore.js",
+      "sha256": "1f46c1b1b5692afef385dcbcbfa486f4d3c66128ab1389d8b2a34c39e9434d91"
+    },
+    {
+      "path": "dist/src/layouts.d.ts",
+      "sha256": "e59d3fd8b0fe1d7f949ffa75032a14e158cfe45061980921f2e46836ae61da77"
+    },
+    {
+      "path": "dist/src/layouts.js",
+      "sha256": "8397e6ab39dbdf4f9d02a0005998733d7f4d59d719e53cf11c9c7cc2f1d9083e"
+    },
+    {
+      "path": "dist/src/momoleg.d.ts",
+      "sha256": "87cdb7fe393463eeae8646c010728fe1629047edcf7d1308d24632bd68f8b1bd"
+    },
+    {
+      "path": "dist/src/momoleg.js",
+      "sha256": "b2b90421519db5b54a2d25111d8e5f42b17aed167dfdf851ea8560e767706039"
+    },
+    {
+      "path": "dist/src/quote.d.ts",
+      "sha256": "551c337d62cd831918ca9bfe697d8c74c0674029d3e6fc765addee5107f6bbcb"
+    },
+    {
+      "path": "dist/src/quote.js",
+      "sha256": "9da916a40aefb4575c1b0f322639ad565cc22af3faace64219cb22ce6b09cf78"
+    },
+    {
+      "path": "dist/src/stcn.d.ts",
+      "sha256": "de402a0871799538f66609861f40ad7123e1ecd06343211eaf0c0c8a4cf4553d"
+    },
+    {
+      "path": "dist/src/stcn.js",
+      "sha256": "03eabfd645bc7f142035206a087ae3b4b1ea409681ccaace2364179df3c8d62d"
+    },
+    {
+      "path": "dist/src/utf8.d.ts",
+      "sha256": "1a7ae40e7e32e4c99930c389ee4efa5b635744b957f04e0b032fd8dc48561fff"
+    },
+    {
+      "path": "dist/src/utf8.js",
+      "sha256": "76c3b53ff45826b88f39e5948391d6a5f1dc373b04b7fe7998a3f4de9a0e2a83"
+    },
+    {
+      "path": "dist/test/base64.test.js",
+      "sha256": "fac1c1c7f684230e2089a2c9f23d1adbcc9837f099581d5e2de4e9d6cd3c72ca"
+    },
+    {
+      "path": "dist/test/box.test.js",
+      "sha256": "8078f7c9c0a508fe79afdee2e071d2bd75156b9638d5559a4a993e651ebb75a1"
+    },
+    {
+      "path": "dist/test/consumer-context.test.js",
+      "sha256": "ec5fcba739b76b62b7339a42b5904868287ae1b25fe0fb216185f3e9bdf01180"
+    },
+    {
+      "path": "dist/test/endpoint.test.js",
+      "sha256": "3cca44885c3227ce44cff5a97ee14fee20b2fd2e50250971685030b655c5a3c5"
+    },
+    {
+      "path": "dist/test/index.test.js",
+      "sha256": "de7eff5dea7859ff6f834db02bd389e165d3781425f5a1a1b8293898cc83fa32"
+    },
+    {
+      "path": "dist/test/keystore.test.js",
+      "sha256": "662dd365286bb96a492d8c9721ece410ee43b5d2a403e756f9cf73558a5509bb"
+    },
+    {
+      "path": "dist/test/layouts.test.js",
+      "sha256": "ccdce3382b514bc00ff6c84909f449493653aaa9fb0dbf3af4794b5097837058"
+    },
+    {
+      "path": "dist/test/momoleg.test.js",
+      "sha256": "4ddf0a4d3ca2660955d8c65557ee48b21a9c9e21edcfc6e42749fe790b157e8f"
+    },
+    {
+      "path": "dist/test/quote.test.js",
+      "sha256": "4c1595179a9e840a924e839e2398d42d35f458d6651fa652951325d4103a2b79"
+    },
+    {
+      "path": "dist/test/stcn.test.js",
+      "sha256": "27999bcaf709a122d01f8fb21e2faeb3507186a4b7ae38dd9e7b9b5a7cda41b4"
+    },
+    {
+      "path": "dist/test/utf8.test.js",
+      "sha256": "8b0218028ad2f6fa79760337e64f10aee3786a53ce2231f55a02c4fd7aafda75"
+    },
+    {
+      "path": "dist/test/viem-shims.js",
+      "sha256": "6fa7575f0b5722a0ba607a377804681c451ff887b47a4611da47633e76a60c77"
+    },
+    {
+      "path": "package.json",
+      "sha256": "57b2a2ac0ea98ab1f06ab8efc7e944a02aed50a54b9f8b9cd03adf1f7d5a2766"
+    }
+  ]
+}
