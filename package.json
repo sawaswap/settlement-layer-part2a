@@ -14,7 +14,7 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "verify:vendored": "node scripts/verify-vendored.mjs",
-    "test:vendored": "vitest run --config vitest.vendored.config.ts"
+    "test:vendored": "node scripts/test-vendored.mjs"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
@@ -26,8 +26,9 @@
     }
   },
   "dependencies": {
-    "@sawaswap/chain-client": "file:vendor/sawaswap/sawaswap-chain-client-0.1.0.tgz",
-    "@sawaswap/crypto": "file:vendor/sawaswap/sawaswap-crypto-0.1.0.tgz",
+    "@sawaswap/chain-client": "file:vendor/sawaswap/sawaswap-chain-client-0.2.0.tgz",
+    "@sawaswap/crypto": "file:vendor/sawaswap/sawaswap-crypto-0.3.0.tgz",
+    "@sawaswap/scn-client": "file:vendor/sawaswap/sawaswap-scn-client-0.2.0.tgz",
     "@tanstack/react-query": "^5.62.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

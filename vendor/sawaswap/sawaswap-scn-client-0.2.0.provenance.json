@@ -1,0 +1,61 @@
+{
+  "package": "@sawaswap/scn-client",
+  "version": "0.2.0",
+  "sourceRepository": "https://github.com/sawaswapHQ/settlement-layer-part2b",
+  "sourceCommit": "7ccae03fd968f721f08e1eb59876a3021d893370",
+  "sourcePath": "packages/scn-client",
+  "builtBy": "tools/vendor-packages.mjs",
+  "toolchain": {
+    "node": "v24.6.0",
+    "typescript": "6.0.3"
+  },
+  "conformanceTests": "dist/test",
+  "tarball": "sawaswap-scn-client-0.2.0.tgz",
+  "tarballSha256": "6b633020ecfa8c254cd91bdae974ddbf70e93480a1ad002c5d3dc6dfa0a914fd",
+  "files": [
+    {
+      "path": "PROVENANCE.json",
+      "sha256": "42d5e7b86ef6f9cf15e87d2fec93914ff079fb070fed2707727e19940c7ede7b"
+    },
+    {
+      "path": "dist/src/client.d.ts",
+      "sha256": "25f5fa2a8a1487e8369ee70147460fc34aab68ca9be4259aa6d1ac70dfd7f07d"
+    },
+    {
+      "path": "dist/src/client.js",
+      "sha256": "6e627ef3049aeb5d86066660a7e89ba48c28765712a4dd8d5fb9e84f45717c6d"
+    },
+    {
+      "path": "dist/src/index.d.ts",
+      "sha256": "a4374d136a2ce362e7fb5aadbdc08062c304120912f6b8f9f20dc2bf296afc50"
+    },
+    {
+      "path": "dist/src/index.js",
+      "sha256": "722c38572930e8d01aafa3764c6b51970799d7f9c6ea6d16d2f314c52bdd1aab"
+    },
+    {
+      "path": "dist/src/types.d.ts",
+      "sha256": "1ec910cd6694162690e3491d191ada2c71a8532b4fbe23bc47739740b1467134"
+    },
+    {
+      "path": "dist/src/types.js",
+      "sha256": "90434a3242f29fde4ac61ab0195398e1a1239122dbd1284ce8c1e7d661e4375c"
+    },
+    {
+      "path": "dist/src/validation.d.ts",
+      "sha256": "00c645bee87380bb2bc10edd2cb291f68dc771c3e0deaf3ecb7493881173b8eb"
+    },
+    {
+      "path": "dist/src/validation.js",
+      "sha256": "9732fbba0416c4e259c353d85596ff40cd35e5a5c3ae19dc3968c856a4cd8d03"
+    },
+    {
+      "path": "dist/test/index.test.js",
+      "sha256": "79484fa5d79867b09036448df0240867f46d36b359fc31bf7935a640866577f4"
+    },
+    {
+      "path": "package.json",
+      "sha256": "feb61e2bfa2f5a17c81566e65955b6e94a568f325330771801ab85b4513f8270"
+    }
+  ]
+}
