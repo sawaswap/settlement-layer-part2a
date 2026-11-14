@@ -48,6 +48,24 @@ const schema = z.object({
   // history is complete; point at a later block to narrow the scan when the
   // Console targets a different instance or you only need recent activity.
   VITE_INDEX_FROM_BLOCK: z.coerce.number().int().nonnegative().default(42110394),
+
+  // C01 origination. The SCN Server Zero deployment the Console looks up keys
+  // in and delivers the sealed objects to. Unset: Screen 1 says so and cannot
+  // originate; the rest of the Console is unaffected.
+  VITE_SCN_URL: z
+    .string()
+    .optional()
+    .transform((v) => (v && v.length > 0 ? v.replace(/\/$/, '') : undefined))
+    .pipe(z.string().url().optional()),
+
+  // ADR 123n15h7v6d v0.3.2 §5.2. Read raw and resolved by @sawaswap/crypto:
+  // STRICT unless exactly 'SYNTHETIC' on Base Sepolia. A real-value deployment
+  // must not set it.
+  VITE_KEY_BINDING_MODE: z.string().optional(),
+
+  // §7.1 anchors for the selected pair, as the pilot selection script prints
+  // them. Administrator-set deployment configuration, never read from SCN.
+  VITE_KEY_ANCHORS: z.string().optional(),
 })
 
 const parsed = schema.safeParse(import.meta.env)

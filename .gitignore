@@ -149,3 +149,6 @@ dist-ssr
 *.local
 .vercel
 .DS_Store
+
+# Authorised Quote Records written by scripts/select-pair.ts
+quote-record*.json

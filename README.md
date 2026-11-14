@@ -40,6 +40,7 @@ deployment of record, so `pnpm dev` works out of the box.
 | `pnpm lint`      | ESLint                       |
 | `pnpm test`      | Vitest unit tests            |
 | `pnpm format`    | Prettier write               |
+| `node scripts/select-pair.ts …` | Pilot selection: Authorised Quote Record + key-binding anchors |
 
 ## Configuration
 
@@ -57,6 +58,9 @@ the browser bundle and is therefore **public**; none are secrets.
 | `VITE_WALLETCONNECT_PROJECT_ID` | WalletConnect (optional; Client-held in production, E.2) |
 | `VITE_INDEX_FROM_BLOCK` | Screen 4 discovery lower bound (default = Settlement deploy block) |
 | `VITE_ENABLE_DRP_HARNESS` | Show/hide the Screen 3 MockDRP test-harness control (`false` to hide) |
+| `VITE_SCN_URL` | SCN Server Zero deployment for origination (Screen 1 cannot originate without it) |
+| `VITE_KEY_BINDING_MODE` | Operator key-binding mode; blank = `STRICT`, `SYNTHETIC` only on Base Sepolia (ADR 123n15h7v6d §5.2) |
+| `VITE_KEY_ANCHORS` | Key-binding anchors for the selected pair, as `scripts/select-pair.ts` prints them (§7.1) |
 
 The env is validated once at startup (zod, `src/config/env.ts`) — a
 misconfiguration fails loudly rather than deep inside a contract call.
@@ -108,7 +112,8 @@ MockDRP), source-verified on Basescan. ABIs in `src/abi/` are extracted verbatim
 from the verified build artefacts. The functions the Console uses:
 
 - **Settlement (reads):** `transactionExists`, `getTransaction`, `getPoRHash`,
-  `getClaimHash`, `ADMIN_ROLE`, `hasRole`.
+  `getClaimHash`, `ADMIN_ROLE`, `hasRole` (including the inert
+  `SAWASWAP_CONSOLE_ORIGINATOR` role, CR-CONSOLE-1).
 - **Settlement (writes):** `commitPoI` (Screen 1); `submitPoR`, `pokeTW1`
   (Screen 2); `submitClaim`, `updateClaim`, `invokeDRP`, `expireTW2`, `expireTW3`
   (Screen 3).
@@ -123,14 +128,64 @@ seven-field struct is the mainnet target (ADR 86cad3qpk). See FIS §a.
 ## Screens
 
 0. **Wallet Connection & Network Verification** — connect one of three wallets; enforce Base Sepolia.
-1. **Initiate Transaction** (Admin-only) — commit a PoI, lock escrow, mint the STID.
+1. **Initiate Transaction** (Admin or Console originator role) — originate a CMM transaction end to end. See *Origination* below.
 2. **Transaction Monitor** (primary verification instrument) — look up any STID; observe state, windows, history; Submit PoR / pokeTW1.
 3. **Dispute & Escalation** — claim window, DRP path, and the TW2/TW3 expiry pokers; every dispute terminal drivable by STID.
 4. **Agent B Transaction Dashboard** — the connected wallet's transactions, filterable by state + window, with drill-down to Screen 2.
 
+## Origination (C01)
+
+Screen 1 originates a CMM transaction from the connected EOA wallet, in the
+protocol's order:
+
+1. **Quote.** The operator loads the Authorised Quote Record that
+   `scripts/select-pair.ts` issued for one Bridge/Relay pair (ADR 123n15h8936
+   v0.14 §2.4c). The Console validates it (§2.4c.3: `quoteId`, authority,
+   contexts, validity window, bounds, `Q_CMM`) and shows User A what they
+   accept.
+2. **Keys.** It looks up both operators on SCN and verifies each signed key
+   binding (ADR 123n15h7v6d v0.3.2 checks 1–8, then the anchor gate in `STRICT`
+   mode). The last accepted binding per chain, Settlement Contract and operator
+   is kept in this browser (check 8).
+3. **Consumer Context.** It builds the three domains (86cb152xc v1.2.13), seals
+   the Consumer Context to User C's SCA and asks the wallet to sign it
+   (EIP-712, 86cb4mgeh v0.7). The signer is recovered before any gas.
+4. **Commit.** `approve` if needed, then `commitPoI` with Operator-B as
+   `beneficiary` and Operator-R as `eligibleClaimant` (§2.4c.4(c),
+   CR-CONSOLE-4). The STID comes from the receipt.
+5. **Deliver.** The preimage material (to Relay), the payout material (to the
+   Bridge) and Transaction Introduction v3 (to User C's SSID) are sealed once
+   and posted to SCN, in that order (`docs/m4-e2e-layouts.md`).
+
+Before step 3 it also refuses an SSID that already has a pending transaction
+(CR-CONSOLE-5): one held open in this browser, or one whose Introduction slot on
+SCN names an STID that is not yet terminal on chain.
+
+Every step is written to a local record first, so a reload resumes rather than
+restarts. A commit is never sent twice from one record: if the wallet did not
+return a hash, the Console looks for the record's `momoLegHash` on chain. A
+delivery retry sends the same sealed bytes. The record holds unsealed material
+until delivery completes and lives only in this browser profile; if its site
+data is cleared before then, the escrow returns through TW1 expiry and
+`expireTW2`.
+
+**Selection script.** Issue the record when the transaction is about to be
+originated; it is valid for one hour by default:
+
+```bash
+node scripts/select-pair.ts \
+  --bridge 0x… --bridge-momo +243… --bridge-sequence 1 --bridge-fingerprint 0x… \
+  --relay 0x… --relay-sequence 1 --relay-fingerprint 0x…
+```
+
+The sequence and fingerprint of each operator come from its AgentOS Network
+screen, never from SCN. The script writes `quote-record.json` and prints the
+`VITE_KEY_ANCHORS` value for the Console deployment.
+
 ## Testing
 
 `pnpm test` runs the vitest unit suite (escalation matrix, dashboard filters,
-window/slot/state derivation, momoLegHash + claim payloads, contract-revert
+window/slot/state derivation, origination (quote acceptance, key binding,
+Consumer Context, the sealed objects and recovery), claim payloads, contract-revert
 decoding, reactive network guard). Manual verification patterns — the six
 state-machine checks browser-only, plus wallet/role detection — are in FIS §g.
