@@ -11,7 +11,10 @@
 //  2. package.json depends on exactly that tarball;
 //  3. every installed file is byte-identical to the recorded file list, and the
 //     installed PROVENANCE.json names the recorded source commit;
-//  4. nothing installed matches a credential shape.
+//  4. nothing installed matches a credential shape;
+//  5. the records cover exactly what is declared and committed: every
+//     @sawaswap dependency has one record, every record is declared, and every
+//     tarball in vendor/sawaswap has a record (review finding C2).
 //
 // Reproducing a tarball needs the Part 2B source, so that check runs in Part
 // 2B's CI (`node tools/vendor-packages.mjs --check`), not here.
@@ -46,6 +49,36 @@ const records = readdirSync(VENDOR).filter((name) => name.endsWith('.provenance.
 if (records.length === 0) throw new Error('No provenance records in vendor/sawaswap.')
 
 const failures = []
+
+// Coverage (C2). Iterating the records alone would pass a dependency added
+// without one, or a tarball dropped in beside the others: both are checked
+// from the other side here.
+const recordFor = new Map()
+for (const recordFile of records) {
+  const record = JSON.parse(readFileSync(join(VENDOR, recordFile), 'utf8'))
+  if (recordFor.has(record.package)) {
+    failures.push(`${record.package}: more than one provenance record in vendor/sawaswap.`)
+  }
+  recordFor.set(record.package, record)
+}
+const declaredPackages = Object.keys(manifest.dependencies ?? {}).filter((name) =>
+  name.startsWith('@sawaswap/'),
+)
+for (const name of declaredPackages) {
+  if (!recordFor.has(name))
+    failures.push(`${name}: declared in package.json with no provenance record.`)
+}
+for (const name of recordFor.keys()) {
+  if (!declaredPackages.includes(name)) {
+    failures.push(`${name}: has a provenance record but is not a dependency in package.json.`)
+  }
+}
+const recordedTarballs = new Set([...recordFor.values()].map((record) => record.tarball))
+for (const name of readdirSync(VENDOR).filter((file) => file.endsWith('.tgz'))) {
+  if (!recordedTarballs.has(name))
+    failures.push(`${name}: no provenance record names this tarball.`)
+}
+
 for (const recordFile of records) {
   const record = JSON.parse(readFileSync(join(VENDOR, recordFile), 'utf8'))
   const label = `${record.package}@${record.version}`

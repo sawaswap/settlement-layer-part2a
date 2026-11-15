@@ -1,8 +1,8 @@
 {
   "package": "@sawaswap/crypto",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "sourceRepository": "https://github.com/sawaswapHQ/settlement-layer-part2b",
-  "sourceCommit": "2695f52d315e19d1868cd5a425d6647bd3715965",
+  "sourceCommit": "7ccae03fd968f721f08e1eb59876a3021d893370",
   "sourcePath": "packages/crypto",
   "builtBy": "tools/vendor-packages.mjs",
   "toolchain": {
@@ -10,12 +10,12 @@
     "typescript": "6.0.3"
   },
   "conformanceTests": "dist/test",
-  "tarball": "sawaswap-crypto-0.1.0.tgz",
-  "tarballSha256": "97fa583b59078c0a9b542d573f3ea8efa3caf36bf38904917c435f2b1faac9bc",
+  "tarball": "sawaswap-crypto-0.3.0.tgz",
+  "tarballSha256": "528b21566e9d2b97dc1d5ae8a22bdf0b3a39973015a4ad1749cb04c0c4da761f",
   "files": [
     {
       "path": "PROVENANCE.json",
-      "sha256": "24426ac14e49ec4435f72451bedfad29d0d34b0645c24b3605e7fde6a5305b2c"
+      "sha256": "687cdb5be5f438538ebf59c7e1915ac1d6ecff04f40b74333167f5ea83559a3e"
     },
     {
       "path": "dist/src/base64.d.ts",
@@ -51,11 +51,19 @@
     },
     {
       "path": "dist/src/index.d.ts",
-      "sha256": "4695481407c723647a0bdfa789c3603af521c8b16490a740effc71924ff5cb7b"
+      "sha256": "7ff9b54c7d9983fad115839708815fd833226dbb0e4e5c91ac27a9d8ece30af8"
     },
     {
       "path": "dist/src/index.js",
-      "sha256": "272138bd54de5cb960698f0221af7040b5bd61bc204b90c075feb68c0420c252"
+      "sha256": "f5bf92577b4a1e70d56dc385ef7f6e1d674483b3e30a1468a20935d8929cceae"
+    },
+    {
+      "path": "dist/src/key-binding.d.ts",
+      "sha256": "cb910da7159fd883957ca88cfbd789f478c5c149d1db17c04242e946d26d4356"
+    },
+    {
+      "path": "dist/src/key-binding.js",
+      "sha256": "e5d734793bde40b7248a6c89fcdb124cdd0354d61fd4cbbbca46be0036d4fab9"
     },
     {
       "path": "dist/src/keystore.d.ts",
@@ -67,11 +75,11 @@
     },
     {
       "path": "dist/src/layouts.d.ts",
-      "sha256": "e59d3fd8b0fe1d7f949ffa75032a14e158cfe45061980921f2e46836ae61da77"
+      "sha256": "9d34ba92c6c5b267c51522bd2f6f20987d3a8df257197a14f6da458f30284b2e"
     },
     {
       "path": "dist/src/layouts.js",
-      "sha256": "8397e6ab39dbdf4f9d02a0005998733d7f4d59d719e53cf11c9c7cc2f1d9083e"
+      "sha256": "660814a60816a5e460a3d4fb1856320c9c5502f662671286eb08bb3e4ccb2361"
     },
     {
       "path": "dist/src/momoleg.d.ts",
@@ -115,7 +123,7 @@
     },
     {
       "path": "dist/test/consumer-context.test.js",
-      "sha256": "ec5fcba739b76b62b7339a42b5904868287ae1b25fe0fb216185f3e9bdf01180"
+      "sha256": "2ea86405ad562973a0833a9fbb7fc911cf54305f802bdc3755e68deec19fe829"
     },
     {
       "path": "dist/test/endpoint.test.js",
@@ -126,12 +134,16 @@
       "sha256": "de7eff5dea7859ff6f834db02bd389e165d3781425f5a1a1b8293898cc83fa32"
     },
     {
+      "path": "dist/test/key-binding.test.js",
+      "sha256": "662714da6b9037d0c27e43c24ff7275fb97cf249402b84d87f4af77a4c691da8"
+    },
+    {
       "path": "dist/test/keystore.test.js",
       "sha256": "662dd365286bb96a492d8c9721ece410ee43b5d2a403e756f9cf73558a5509bb"
     },
     {
       "path": "dist/test/layouts.test.js",
-      "sha256": "ccdce3382b514bc00ff6c84909f449493653aaa9fb0dbf3af4794b5097837058"
+      "sha256": "ef16a0f9becee0aba8685a428d9ee39a942ee7a826617643ecd9a1cd3edf8690"
     },
     {
       "path": "dist/test/momoleg.test.js",
@@ -150,12 +162,16 @@
       "sha256": "8b0218028ad2f6fa79760337e64f10aee3786a53ce2231f55a02c4fd7aafda75"
     },
     {
+      "path": "dist/test/vectors/key-binding-v1.js",
+      "sha256": "d02d93e9deb93bc7ec752d49f4cb106199f31d909d526662e2ba784b561f3ae1"
+    },
+    {
       "path": "dist/test/viem-shims.js",
-      "sha256": "6fa7575f0b5722a0ba607a377804681c451ff887b47a4611da47633e76a60c77"
+      "sha256": "00e7792250b5a3bf656d379b0a4960b87c7ac0765e368e281cbe9d4e34cb39ef"
     },
     {
       "path": "package.json",
-      "sha256": "57b2a2ac0ea98ab1f06ab8efc7e944a02aed50a54b9f8b9cd03adf1f7d5a2766"
+      "sha256": "8978bc18c86facbc2bfcbbb0b98839f9bc78c98b282fdc3cdade532b47b73209"
     }
   ]
 }

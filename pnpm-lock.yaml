@@ -12,11 +12,14 @@ importers:
   .:
     dependencies:
       '@sawaswap/chain-client':
-        specifier: file:vendor/sawaswap/sawaswap-chain-client-0.1.0.tgz
-        version: file:vendor/sawaswap/sawaswap-chain-client-0.1.0.tgz(viem@2.55.13(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))(vitest@4.1.12(jsdom@25.0.1(bufferutil@4.1.0)(utf-8-validate@5.0.10))(vite@6.4.3(jiti@1.21.7)))
+        specifier: file:vendor/sawaswap/sawaswap-chain-client-0.2.0.tgz
+        version: file:vendor/sawaswap/sawaswap-chain-client-0.2.0.tgz(viem@2.55.13(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))(vitest@4.1.12(jsdom@25.0.1(bufferutil@4.1.0)(utf-8-validate@5.0.10))(vite@6.4.3(jiti@1.21.7)))
       '@sawaswap/crypto':
-        specifier: file:vendor/sawaswap/sawaswap-crypto-0.1.0.tgz
-        version: file:vendor/sawaswap/sawaswap-crypto-0.1.0.tgz(viem@2.55.13(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))(vitest@4.1.12(jsdom@25.0.1(bufferutil@4.1.0)(utf-8-validate@5.0.10))(vite@6.4.3(jiti@1.21.7)))
+        specifier: file:vendor/sawaswap/sawaswap-crypto-0.3.0.tgz
+        version: file:vendor/sawaswap/sawaswap-crypto-0.3.0.tgz(viem@2.55.13(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))(vitest@4.1.12(jsdom@25.0.1(bufferutil@4.1.0)(utf-8-validate@5.0.10))(vite@6.4.3(jiti@1.21.7)))
+      '@sawaswap/scn-client':
+        specifier: file:vendor/sawaswap/sawaswap-scn-client-0.2.0.tgz
+        version: file:vendor/sawaswap/sawaswap-scn-client-0.2.0.tgz(viem@2.55.13(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))(vitest@4.1.12(jsdom@25.0.1(bufferutil@4.1.0)(utf-8-validate@5.0.10))(vite@6.4.3(jiti@1.21.7)))
       '@tanstack/react-query':
         specifier: ^5.62.7
         version: 5.101.1(react@18.3.1)
@@ -844,9 +847,9 @@ packages:
     engines: {node: '>=16'}
     deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
-  '@sawaswap/chain-client@file:vendor/sawaswap/sawaswap-chain-client-0.1.0.tgz':
-    resolution: {integrity: sha512-TO6RtH+b8jmmqSyaRQ7Z9PlJZCSmkbuApNjkEcG2K56QqsDfaA89U7o/KlqfhAElnjs7XEJF3zVmHukPddNjOw==, tarball: file:vendor/sawaswap/sawaswap-chain-client-0.1.0.tgz}
-    version: 0.1.0
+  '@sawaswap/chain-client@file:vendor/sawaswap/sawaswap-chain-client-0.2.0.tgz':
+    resolution: {integrity: sha512-PcfUX//GEnK6b19PsRexPorZUQaTictjUGN1ln2sKT02E3va1anIrr2Vp9VAXNocQouP4RQVaCqyengA15wXeQ==, tarball: file:vendor/sawaswap/sawaswap-chain-client-0.2.0.tgz}
+    version: 0.2.0
     peerDependencies:
       viem: 2.55.13
       vitest: ^4.1.10
@@ -854,9 +857,21 @@ packages:
       vitest:
         optional: true
 
-  '@sawaswap/crypto@file:vendor/sawaswap/sawaswap-crypto-0.1.0.tgz':
-    resolution: {integrity: sha512-tp37uIPuNswYaDoTncQiw201b5k1UPwJF1hgZRorYXwlix3fc+nFQhVDraME/M5pNoLOssyC5rFLNhjEqonL4A==, tarball: file:vendor/sawaswap/sawaswap-crypto-0.1.0.tgz}
-    version: 0.1.0
+  '@sawaswap/crypto@file:vendor/sawaswap/sawaswap-crypto-0.3.0.tgz':
+    resolution: {integrity: sha512-ByvDRts9k09qqx2r9ImFopLDjPWfJprVgz1RMTdDoDNVahRkvXwDT2C4xPPGHcZLyZgJ3So+KqkF9SVD0Pt2zQ==, tarball: file:vendor/sawaswap/sawaswap-crypto-0.3.0.tgz}
+    version: 0.3.0
+    peerDependencies:
+      viem: 2.55.13
+      vitest: ^4.1.10
+    peerDependenciesMeta:
+      viem:
+        optional: true
+      vitest:
+        optional: true
+
+  '@sawaswap/scn-client@file:vendor/sawaswap/sawaswap-scn-client-0.2.0.tgz':
+    resolution: {integrity: sha512-j4iTUh32PtwlXnNG11Wv28SP2DjgY0zWokVtRwl0wBxGAcfKU0EYjM4LOSbQ9SEilk1tzvFaraDbbhG+0sKX+Q==, tarball: file:vendor/sawaswap/sawaswap-scn-client-0.2.0.tgz}
+    version: 0.2.0
     peerDependencies:
       viem: 2.55.13
       vitest: ^4.1.10
@@ -4714,17 +4729,22 @@ snapshots:
 
   '@safe-global/safe-gateway-typescript-sdk@3.23.1': {}
 
-  '@sawaswap/chain-client@file:vendor/sawaswap/sawaswap-chain-client-0.1.0.tgz(viem@2.55.13(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))(vitest@4.1.12(jsdom@25.0.1(bufferutil@4.1.0)(utf-8-validate@5.0.10))(vite@6.4.3(jiti@1.21.7)))':
+  '@sawaswap/chain-client@file:vendor/sawaswap/sawaswap-chain-client-0.2.0.tgz(viem@2.55.13(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))(vitest@4.1.12(jsdom@25.0.1(bufferutil@4.1.0)(utf-8-validate@5.0.10))(vite@6.4.3(jiti@1.21.7)))':
     dependencies:
       viem: 2.55.13(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76)
     optionalDependencies:
       vitest: 4.1.12(jsdom@25.0.1(bufferutil@4.1.0)(utf-8-validate@5.0.10))(vite@6.4.3(jiti@1.21.7))
 
-  '@sawaswap/crypto@file:vendor/sawaswap/sawaswap-crypto-0.1.0.tgz(viem@2.55.13(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))(vitest@4.1.12(jsdom@25.0.1(bufferutil@4.1.0)(utf-8-validate@5.0.10))(vite@6.4.3(jiti@1.21.7)))':
+  '@sawaswap/crypto@file:vendor/sawaswap/sawaswap-crypto-0.3.0.tgz(viem@2.55.13(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))(vitest@4.1.12(jsdom@25.0.1(bufferutil@4.1.0)(utf-8-validate@5.0.10))(vite@6.4.3(jiti@1.21.7)))':
     dependencies:
       '@noble/ciphers': 2.4.0
       '@noble/curves': 1.9.7
       '@noble/hashes': 2.4.0
+    optionalDependencies:
+      viem: 2.55.13(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76)
+      vitest: 4.1.12(jsdom@25.0.1(bufferutil@4.1.0)(utf-8-validate@5.0.10))(vite@6.4.3(jiti@1.21.7))
+
+  '@sawaswap/scn-client@file:vendor/sawaswap/sawaswap-scn-client-0.2.0.tgz(viem@2.55.13(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76))(vitest@4.1.12(jsdom@25.0.1(bufferutil@4.1.0)(utf-8-validate@5.0.10))(vite@6.4.3(jiti@1.21.7)))':
     optionalDependencies:
       viem: 2.55.13(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@3.25.76)
       vitest: 4.1.12(jsdom@25.0.1(bufferutil@4.1.0)(utf-8-validate@5.0.10))(vite@6.4.3(jiti@1.21.7))

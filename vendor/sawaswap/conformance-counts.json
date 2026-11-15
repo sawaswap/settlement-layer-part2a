@@ -1,0 +1,17 @@
+{
+  "@sawaswap/chain-client": {
+    "version": "0.2.0",
+    "files": 5,
+    "tests": 43
+  },
+  "@sawaswap/crypto": {
+    "version": "0.3.0",
+    "files": 12,
+    "tests": 287
+  },
+  "@sawaswap/scn-client": {
+    "version": "0.2.0",
+    "files": 1,
+    "tests": 11
+  }
+}

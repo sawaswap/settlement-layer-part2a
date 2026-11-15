@@ -1,8 +1,8 @@
 {
   "package": "@sawaswap/chain-client",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "sourceRepository": "https://github.com/sawaswapHQ/settlement-layer-part2b",
-  "sourceCommit": "2695f52d315e19d1868cd5a425d6647bd3715965",
+  "sourceCommit": "7ccae03fd968f721f08e1eb59876a3021d893370",
   "sourcePath": "packages/chain-client",
   "builtBy": "tools/vendor-packages.mjs",
   "toolchain": {
@@ -10,12 +10,12 @@
     "typescript": "6.0.3"
   },
   "conformanceTests": "dist/test",
-  "tarball": "sawaswap-chain-client-0.1.0.tgz",
-  "tarballSha256": "36b8bff9298d8d634930d8150308b447201d1adcd34c0a30b6c21e064f46b9d1",
+  "tarball": "sawaswap-chain-client-0.2.0.tgz",
+  "tarballSha256": "e6e3a147d957d13a3e1063c6f3e1319608e7a480cc7d7865a961add339172721",
   "files": [
     {
       "path": "PROVENANCE.json",
-      "sha256": "13200b277195031c5da3ff6f3cca53707bf4823fa85930529db0ca3255721d27"
+      "sha256": "523941e61aba67b46ba2d2e9b5a09fcaabb578ace6e6d10492c03bff465cbf6c"
     },
     {
       "path": "dist/src/abi/settlement.d.ts",
@@ -43,11 +43,11 @@
     },
     {
       "path": "dist/src/signer.d.ts",
-      "sha256": "e4fc955547dcb13b51c660d759c93e3a0c48ea80b3871897b1bdca78f3558625"
+      "sha256": "66dc06527eb38f8ee30cab510508d7ab91105e84be46dc28b44e32dcb6a9621e"
     },
     {
       "path": "dist/src/signer.js",
-      "sha256": "d648d947aae926d1e14e89a8d4de656115baf9b46cca375b737978c0e16c1f23"
+      "sha256": "84b851f1f0cbe814b3d8675afae0dc74f904cd7bbcecc09dd214568c1d6262d7"
     },
     {
       "path": "dist/src/watcher.d.ts",
@@ -83,11 +83,11 @@
     },
     {
       "path": "dist/test/writer.test.js",
-      "sha256": "e022c739103f4a54aae2d7765006da0d6cfe3e7bce6e24f6cce2ac33843ccf91"
+      "sha256": "27c087f804b6b7d021a9742da3732aed69e8096ba4c5b9e9bf5c8f700a170df2"
     },
     {
       "path": "package.json",
-      "sha256": "2c3fb5da15d15a7520f1e2de61144a8de16e1f8d3c84f95a5b87e90e08a6c2ab"
+      "sha256": "d9f112bcc8aff888289e38f911c3097f2caa8126d7a0b4f1132cbdf7640067b5"
     }
   ]
 }
